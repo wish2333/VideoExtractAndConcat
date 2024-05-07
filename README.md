@@ -42,6 +42,8 @@ pip install pyside6
 python main.py
 ```
 
+4. 不安装pyside6、不调用gui，以代码形式运行，可以对ffmpegApi.py直接调用：见[DETAIL.md](DETAIL.md)中调试用代码部分。
+
 # 更新日志
 
 ## Create 20240506-1911
