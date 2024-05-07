@@ -1,24 +1,32 @@
 # VideoExtractAndConcat
 
-## 使用要求
+## 使用指南（20240506）
 
-**依赖**
+1. 安装python环境和第三方库pyside6
 
-- ffmpeg
+```
+pip install pyside6
+```
 
-**第三方依赖库**
+2. 安装FFmpeg到main.py目录下，文件树结构如下
 
-- pyside6 
+```
+├── FFmpeg    	# 注意大写           
+│   └── bin
+│   └── ...
+├── main.py     # 主程序
+├── ...      
+```
 
-**安装ffmpeg方法**
+可以不按上述文件树组织文件，但需要在程序中手中点击设定ffmpeg/bin文件夹路径
 
-将ffmpeg解压进FFmpeg文件夹中，使得文件树结构为
+3. 运行main.py
 
-- FFmpeg
-  - bin
-  - ...
-- main.py
-- ...
+```
+python main.py
+```
+
+# 更新日志
 
 ## Create 20240506-1911
 
