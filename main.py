@@ -1,11 +1,26 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
 from Ui_VideoEditor import Ui_MainWindow
-from ffmpegApi import FFmpeg
+from ffmpegApi import FFmpegHandler as FFmpeg
 from config import ffpath
+import logging
+
+# 初始化logger
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename='log.txt', filemode='w', encoding='utf-8')
+
+print("logger initialized")
+
+# 添加一个StreamHandler用于控制台输出（可选）
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(logging.Formatter('%(message)s'))
+logging.getLogger('').addHandler(console_handler)
 
 # 导入ffmpeg路径
-init1 = print("初始化ffmpeg路径为：", ffpath.ffmpeg_path)
-init2 = print("初始化ffprobe路径为：", ffpath.ffprobe_path)
+init1 = ffpath.ffmpeg_path
+init2 = ffpath.ffprobe_path
+# 打印初始化ffmpeg路径为：
+logging.info(f"初始化ffmpeg路径为：{init1}")
+logging.info(f"初始化ffprobe路径为：{init2}")
 
 # 主窗口类
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -14,8 +29,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.bind()
+        self.initprint()
         # 打开控制台窗口
         # TODO：未完成
+    def initprint(self):
+        self.textEdit.append("欢迎使用视频处理工具")
+        self.textEdit.append("初始化ffmpeg路径为：" + init1)
+        self.textEdit.append("初始化ffprobe路径为：" + init2)
     # 绑定事件槽
     def bind(self):
         # 设置按钮的信号槽
@@ -136,4 +156,4 @@ if __name__ == '__main__':
     app = QApplication([])
     window = MainWindow()  # 创建窗口对象
     window.show()  # 显示窗口
-    app.exec_()  # 运行程序
+    app.exec()  # 运行程序
