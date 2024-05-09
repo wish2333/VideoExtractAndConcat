@@ -63,3 +63,32 @@ python main.py
 ## Release 20240507-1904
 
 发布封装包，可以优雅运行程序啦，就是pyinstaller封装出来的东西大小是在太感人了，再寻思寻思别的封装技术
+
+## Release 20240508-1517
+
+调整了封装结构，使得ffmpeg能够被正确识别（ffmpeg封装将在star>100时取消）
+
+## Update 20240509-1530
+
+优化代码结构和模块调用，使用asyncio模块实现异步执行FFmpeg命令，使用logging模块实现格式化日志并输出日志
+
+### 进度
+
+- [x] 对version函数的修改
+- [x] 对extract函数的修改
+  - [x] async def get_duration
+  - [x] asyncio.run(run_async())
+- [x] 对merge函数的修改
+- [x] 处理overwrite事件（默认覆盖-y或不覆盖-n）
+
+### 下一步修改目标
+
+- [ ] overwrite选项UI实现
+- [ ] 双文件合并选项核心逻辑实现、UI实现
+- [ ] UI重构，为后续功能预留空间
+  - [ ] 源代码链接
+  - [ ] Browse同步textEdit
+  - [ ] 每个功能一栏
+- [ ] 后续功能预想
+  - [ ] 单文件、多文件转码
+  - [ ] 编码格式选项实现
