@@ -93,25 +93,25 @@ python main.py
   - [ ] 单文件、多文件转码
   - [ ] 编码格式选项实现
 
-# UpdateLog20240509
+## UpdateLog20240509
 
 version-pre1.1弃用
 
-## 弃用原因
+### 弃用原因
 
 异步多线程运行并不适用于ffmpeg视频处理，pre1.2将恢复到pre0.2的subprocess同步运行，解决假死并不必要，但是将尝试使用Thread多线程分开UI运行和FFmpeg运行
 
-# UpdateLog20240510
+## UpdateLog20240510
 
 返回到pre0.2进行，优化代码结构，重新使用同步执行FFmpeg命令，使用logging模块实现格式化日志并输出日志。通过QObject、QThread和Singal实现多线程，确保UI不假死，实际上多线程没有优化性能的作用，只是不希望程序假死，优雅！
 
-## 调整内容
+### 调整内容
 
-### ffmpegApi.py
+#### ffmpegApi.py
 
 实时返回ffmpeg执行命令（实际上并不实时而是需要等待某一步进行完成后才能返回，因而尚不能实现返回进度条→是不是去掉while True的判断就行了？笑哭）
 
-### main.py
+#### main.py
 
 1. 多线程设置
 2. logging记录日志信息
