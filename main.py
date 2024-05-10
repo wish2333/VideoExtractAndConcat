@@ -1,26 +1,66 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog
-from Ui_VideoEditor import Ui_MainWindow
-from ffmpegApi import FFmpegHandler as FFmpeg
-from config import ffpath
+from PySide6.QtCore import QThread, Signal, QObject
+from qt_material import apply_stylesheet
+
+import os
+import sys
 import logging
 
+from Ui_VideoEditor import Ui_MainWindow
+from ffmpegApi import FFmpeg
+from config import ffpath
+
 # 初始化logger
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', filename='log.txt', filemode='w', encoding='utf-8')
-
-print("logger initialized")
-
+logging.basicConfig(
+    level=logging.INFO, 
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', 
+    filename='log.txt', 
+    filemode='w', 
+    encoding='utf-8'
+)
 # 添加一个StreamHandler用于控制台输出（可选）
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
-console_handler.setFormatter(logging.Formatter('%(message)s'))
+console_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 logging.getLogger('').addHandler(console_handler)
+logging.info("logger initialized")
 
-# 导入ffmpeg路径
-init1 = ffpath.ffmpeg_path
-init2 = ffpath.ffprobe_path
 # 打印初始化ffmpeg路径为：
-logging.info(f"初始化ffmpeg路径为：{init1}")
-logging.info(f"初始化ffprobe路径为：{init2}")
+logging.info(f"初始化ffmpeg路径为：{ffpath.ffmpeg_path}")
+logging.info(f"初始化ffprobe路径为：{ffpath.ffprobe_path}")
+
+# 继承自QObject的子类，用于执行后台任务的子类
+class Worker(QObject):
+    finished = Signal()  # 任务完成时发出的信号
+    def __init__(self, task_type, ffmpeg_path, ffprobe_path, *task_args):
+        super().__init__()
+        self.task_type = task_type
+        self.ffmpeg_path = ffmpeg_path
+        self.ffprobe_path = ffprobe_path
+        self.task_args = task_args
+    def run_ffmpeg_task(self):
+        if self.task_type == 'extract_video':
+            self.extract_video(*self.task_args)
+        elif self.task_type =='merge_video':
+            self.merge_video(*self.task_args)
+        self.finished.emit()  # 任务完成，发出信号
+
+    # 在这里可以添加更多任务类型的判断和调用
+    def extract_video(self, input_folder, start_time, end_time, output_folder, encoder, overwrite):
+        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
+        ffmpeg_instance.extract_video(input_folder, start_time, end_time, output_folder, encoder, overwrite)
+    def merge_video(self, input_folder, file1, file2, output_folder, encoder, overwrite):
+        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
+        ffmpeg_instance.merge_video(input_folder, file1, file2, output_folder, encoder, overwrite)
+        
+# 继承自QThread的子类，用于后台执行任务的线程类
+class WorkerThread(QThread):
+    def __init__(self, worker):
+        super().__init__()
+        self.worker = worker
+
+    def run(self):
+        self.worker.run_ffmpeg_task()
 
 # 主窗口类
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -29,13 +69,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.bind()
-        self.initprint()
-        # 打开控制台窗口
-        # TODO：未完成
-    def initprint(self):
-        self.textEdit.append("欢迎使用视频处理工具")
-        self.textEdit.append("初始化ffmpeg路径为：" + init1)
-        self.textEdit.append("初始化ffprobe路径为：" + init2)
+        self.init_print()
+
+    # 初始化打印
+    def init_print(self):
+        self.textEdit.append("欢迎使用FFmpeg-python视频处理工具！")
+        self.textEdit.append(f"ffmpeg初始化：{ffpath.ffmpeg_path}")
+        self.textEdit.append(f"ffprobe初始化：{ffpath.ffprobe_path}")
+        # 判断ffmpeg文件是否存在
+        if not (os.path.isfile(ffpath.ffmpeg_path) and os.path.isfile(ffpath.ffprobe_path)):
+            self.textEdit.append("ffmpeg路径或ffprobe路径错误，请检查！")
+
     # 绑定事件槽
     def bind(self):
         # 设置按钮的信号槽
@@ -55,9 +99,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self, "选择bin文件夹", "./")
         ffpath.ffmpeg_path = f"{ffmpeg_folder}\\ffmpeg.exe"
         ffpath.ffprobe_path = f"{ffmpeg_folder}\\ffprobe.exe"
-        if ffpath.ffmpeg_path:
-            self.textEdit.append(f"ffmpeg路径修改为：{ffpath.ffmpeg_path}；{ffpath.ffprobe_path}")
-            print(ffpath.ffmpeg_path)
+        # 检查ffmpeg文件是否存在
+        if not (os.path.isfile(ffpath.ffmpeg_path) and os.path.isfile(ffpath.ffprobe_path)):
+            self.textEdit.append("ffmpeg路径或ffprobe路径错误，请检查！")
+            return
+        else:
+            self.textEdit.append(f"ffmpeg路径修改为：{ffpath.ffmpeg_path}")
+            self.textEdit.append(f"ffprobe路径修改为：{ffpath.ffprobe_path}")
 
     # 切割流程
     # 点击导入视频文件夹按钮，弹出文件选择对话框，选择视频文件夹，选择完成后显示在文本框中
@@ -81,17 +129,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not hasattr(self, 'folder1_path'):
             self.textEdit.append("切割：请先输入视频文件夹")
             return
-        # 开始切割视频
         # 读取片头时间和片尾时间，以及编码格式
         start_time = self.time1.text()
         end_time = self.time2.text()
         encoder = self.line.text()
+        # overwrite = self.checkBox.isChecked()
+        # 开始切割视频
         if self.folder_path1 and self.folder1_path:
-            # 实例化FFmpegApi
-            ffmpeg_instance = FFmpeg(ffpath.ffmpeg_path)
-            # 调用extract_video函数
-            ffmpeg_instance.extract_video(self.folder_path1, start_time, end_time,self.folder1_path, encoder)
-            self.textEdit.append("视频切割完成")
+            # 创建Worker实例
+            self.worker = Worker('extract_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.folder_path1, start_time, end_time, self.folder1_path, encoder, '-y')
+            # 实例化WorkerThread
+            self.thread = WorkerThread(self.worker)
+            self.thread.started.connect(lambda: self.textEdit.append("开始切割视频"))  # 线程开始时显示提示信息
+            self.thread.finished.connect(lambda: self.textEdit.append("视频切割完成"))  # 线程结束时显示提示信息
+            self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
+            self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
+            self.thread.start()  # 开始线程
         else:
             self.textEdit.append("切割：请先输入视频文件夹")
     
@@ -140,12 +193,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 开始合并视频
         # 读取片头时间和片尾时间，以及编码格式
         encoder = self.line2.text()
+        # overwrite = self.checkBox2.isChecked()
         if self.folder_path2 and self.file1_path and self.file2_path and self.folder2_path:
-            # 实例化FFmpegApi
-            ffmpeg_instance = FFmpeg(ffpath.ffmpeg_path)
-            # 调用merge_video函数
-            ffmpeg_instance.merge_video(self.folder_path2, self.file1_path, self.file2_path, self.folder2_path, encoder)
-            self.textEdit.append("视频合并完成")
+            # 创建Worker实例
+            self.worker = Worker('merge_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.folder_path2, self.file1_path, self.file2_path, self.folder2_path, encoder, '-y')
+            # 实例化WorkerThread
+            self.thread = WorkerThread(self.worker)
+            self.thread.started.connect(lambda: self.textEdit.append("开始合并视频"))  # 线程开始时显示提示信息
+            self.thread.finished.connect(lambda: self.textEdit.append("视频合并完成"))  # 线程结束时显示提示信息
+            self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
+            self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
+            self.thread.start()  # 开始线程
         else:
             self.textEdit.append("合并：请先输入视频文件夹")
 
@@ -153,7 +211,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 # 运行窗口程序
 if __name__ == '__main__':
-    app = QApplication([])
+    app = QApplication(sys.argv)
     window = MainWindow()  # 创建窗口对象
+    apply_stylesheet(app, theme='dark_blue.xml')
     window.show()  # 显示窗口
     app.exec()  # 运行程序
