@@ -1,3 +1,120 @@
+# UpdateLog20240511
+
+version-pre2.0，UI重构，参考[PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)和[MihiroToolbox](https://github.com/Eanya-Tonic/MihiroToolbox)构造UI和功能分布，目前仅完成单文件（音视频）转码裁切的功能面板，且功能暂未完善（如字幕封装、音频替换封装等）
+
+## PyQt-Fluent-Widgets 搭配 QtDesigner
+
+## QtDesigner组件提升
+
+## 实现FluentWindow
+
+### main.py建立主界面
+
+```python
+import sys
+# 第三方库
+from PySide6.QtCore import Qt, QThread, Signal, QObject
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QApplication, QWidget
+from qfluentwidgets import setThemeColor, FluentWindow
+
+from Ui_vencoInterface import Ui_Form
+
+class mainWindow(FluentWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Venco Interface")
+        # self.setWindowIcon(QIcon("icon.png"))
+
+
+if __name__ == '__main__':
+    # enable dpi scale
+	# 这一项好像有问题QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    app = QApplication(sys.argv)
+    window = mainWindow()
+    window.show()
+    app.exec()
+```
+
+### Interface.py
+
+```python
+from PySide6.QtCore import Qt, QThread, Signal, QObject
+from PySide6.QtGui import QPixmap, QPainter, QColor
+from PySide6.QtWidgets import QWidget
+
+from Ui_vencoInterface import Ui_Form
+
+class VencoInterface(QWidget, Ui_Form):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setupUi(self)
+```
+
+### main.py添加子界面
+
+```python
+from from venco_Interface import VencoInterface
+
+def __init__(self):
+    # ....
+    # 添加子界面
+	self.vencoInterface = VencoInterface(self)
+    self.addSubInterface(self.vencoInterface, FluentIcon.RINGER, "Venco Interface")
+```
+
+## 界面编排
+
+## 转码界面
+
+功能：（单文件）转码+切割
+
+### 文件设置
+
+#### 控制台console
+
+- readonly
+
+#### 输入文件夹、输出文件夹、字幕、音频
+
+### 编码设置
+
+#### 初始化自定义编码
+
+```python
+class TextEditClass():
+    # custom_encoder
+    def change_custom_encoder(self, 
+        vcodec = '-vcodec libx264 ', 
+        vpreset = '-preset medium -crf 23 ',
+        resolution = '',
+        fps = '',
+        acodec = '-acodec aac ',
+        apreset = '-b:a 128k ',
+    ):
+
+class VencoInterface(QWidget, Ui_Form):
+    # ......
+    # encoder
+	custom_encoder = TextEditClass.change_custom_encoder(TextEditClass)
+	self.plainTextEdit.setPlainText(custom_encoder) 
+```
+
+#### 绑定各项编码设置到自定义编码plainTextEdit中显示
+
+### 开始执行
+
+- 如果有输入、输出→检查输入是否合法
+  - 合法→检查是否切割
+    - 简单转码流程
+    - 切割流程
+  - 不合法
+    - 弹窗警告
+- 如果没有输入、输出→检查是否有音频
+  - 有音频→音频转码流程
+  - 无音频→无事发生
+- 功能暂未完善（如字幕封装、音频替换封装等）
+
 # UpdateLog20240508
 
 优化代码结构，使用asyncio模块实现异步执行FFmpeg命令，使用logging模块实现格式化日志并输出日志

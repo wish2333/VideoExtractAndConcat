@@ -9,9 +9,9 @@
 - [ ] 优化性能
 - [ ] 中止处理
 - [x] 允许调出控制台
-- [ ] 使FFmpeg运行时的输出返回到控制台
+- [x] 使FFmpeg运行时的输出返回到控制台
 - [ ] 使合并流程能够识别两段视频的合并（目前必须同时传入片头片尾）
-- [ ] 窗口美化
+- [x] 窗口美化
 - [x] 打包依赖库
 - [x] 封装bat或exe
 - [ ] 其他
@@ -50,23 +50,34 @@ python main.py
 
 # 更新日志
 
-## Create 20240506-1911
+## Update 20240511
 
-上传了源代码，实现了批量处理片头片尾的问题
+version-pre2.0，UI重构
 
-**目前存在的问题**
+## Update 20240510
 
-- 固定必须有片头和片尾，暂时缺失两个文件合并的情况
-- 没能实现打包，等有空了在研究研究
-- 待定
+返回到pre0.2进行，优化代码结构，重新使用同步执行FFmpeg命令，使用logging模块实现格式化日志并输出日志。通过QObject、QThread和Singal实现多线程，确保UI不假死，实际上多线程没有优化性能的作用，只是不希望程序假死，优雅！
 
-## Release 20240507-1904
+### 调整内容
 
-发布封装包，可以优雅运行程序啦，就是pyinstaller封装出来的东西大小是在太感人了，再寻思寻思别的封装技术
+#### ffmpegApi.py
 
-## Release 20240508-1517
+实时返回ffmpeg执行命令（实际上并不实时而是需要等待某一步进行完成后才能返回，因而尚不能实现返回进度条→是不是去掉while True的判断就行了？笑哭）
 
-调整了封装结构，使得ffmpeg能够被正确识别（ffmpeg封装将在star>100时取消）
+#### main.py
+
+1. 多线程设置
+2. logging记录日志信息
+3. 调整主题
+4. 检查ffmpeg修改后的情况
+
+## Update 20240509-2206
+
+version-pre1.1弃用
+
+### 弃用原因
+
+异步多线程运行并不适用于ffmpeg视频处理，pre1.2将恢复到pre0.2的subprocess同步运行，解决假死并不必要，但是将尝试使用Thread多线程分开UI运行和FFmpeg运行
 
 ## Update 20240509-1530
 
@@ -93,27 +104,30 @@ python main.py
   - [ ] 单文件、多文件转码
   - [ ] 编码格式选项实现
 
-## UpdateLog20240509
+## Release 20240508-1517
 
-version-pre1.1弃用
+调整了封装结构，使得ffmpeg能够被正确识别（ffmpeg封装将在star>100时取消）
 
-### 弃用原因
+## Release 20240507-1904
 
-异步多线程运行并不适用于ffmpeg视频处理，pre1.2将恢复到pre0.2的subprocess同步运行，解决假死并不必要，但是将尝试使用Thread多线程分开UI运行和FFmpeg运行
+发布封装包，可以优雅运行程序啦，就是pyinstaller封装出来的东西大小是在太感人了，再寻思寻思别的封装技术
 
-## UpdateLog20240510
+## Create 20240506-1911
 
-返回到pre0.2进行，优化代码结构，重新使用同步执行FFmpeg命令，使用logging模块实现格式化日志并输出日志。通过QObject、QThread和Singal实现多线程，确保UI不假死，实际上多线程没有优化性能的作用，只是不希望程序假死，优雅！
+上传了源代码，实现了批量处理片头片尾的问题
 
-### 调整内容
+**目前存在的问题**
 
-#### ffmpegApi.py
+- 固定必须有片头和片尾，暂时缺失两个文件合并的情况
+- 没能实现打包，等有空了在研究研究
+- 待定
 
-实时返回ffmpeg执行命令（实际上并不实时而是需要等待某一步进行完成后才能返回，因而尚不能实现返回进度条→是不是去掉while True的判断就行了？笑哭）
+# 参考项目
 
-#### main.py
+[FFmpeg](https://ffmpeg.org/download.html)
 
-1. 多线程设置
-2. logging记录日志信息
-3. 调整主题
-4. 检查ffmpeg修改后的情况
+[PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)
+
+[MihiroToolbox](https://github.com/Eanya-Tonic/MihiroToolbox)
+
+
