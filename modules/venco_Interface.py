@@ -1,8 +1,7 @@
 import logging
 import os
 
-from PySide6.QtCore import Qt, QThread, Signal, QObject
-from PySide6.QtGui import QPixmap, QPainter, QColor
+from PySide6.QtCore import QThread, Signal, QObject
 from PySide6.QtWidgets import QWidget, QFileDialog, QMessageBox
 
 from modules.config import ffpath

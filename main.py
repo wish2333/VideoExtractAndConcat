@@ -2,8 +2,7 @@ import sys
 import logging
 # 第三方库
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QApplication, QWidget
+from PySide6.QtWidgets import QApplication
 from qfluentwidgets import FluentWindow, FluentIcon
 # 自定义模块
 from modules.venco_Interface import VencoInterface

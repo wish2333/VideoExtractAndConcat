@@ -46,3 +46,6 @@ pip install auto-py-to-exe
 一般会以主文件名字命名文件夹，我的是main.py，文件夹名字就是main，打开文件夹，里面 有main.exe，先回想下你的项目有没有依赖的txt，xml，cfg，csv，xslx之类的文件，把这些文件放入到主文件引用的位置。最后双击main.exe运行。
 
 这个方法比pyinstaller方便多了，喜欢的点个赞吧。
+
+## 使用嵌入式包+get-pip封装
+
