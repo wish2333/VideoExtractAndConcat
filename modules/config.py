@@ -8,3 +8,4 @@ class ffpath:
     # 转换为绝对路径
     ffmpeg_path = os.path.abspath(ffmpeg_path_relative)
     ffprobe_path = os.path.abspath(ffprobe_path_relative)
+

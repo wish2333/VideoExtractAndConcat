@@ -6,7 +6,7 @@ import os
 import logging
 # import time
 
-from config import ffpath
+from modules.config import ffpath
 
 class FFmpeg:
 
@@ -79,7 +79,7 @@ class FFmpeg:
             return None  # 或者返回一个默认值
         try:
             duration = float(stdout)
-            logging.info("视频总秒数为：", duration)
+            logging.info("视频总秒数为：" + str(duration))
             return duration
         except ValueError as e:
             logging.error("转换视频持续时间为浮点数时出错：", str(e))
@@ -87,9 +87,9 @@ class FFmpeg:
 
     # 计算时间字符串
     def time_calculate(self, duration, end):
+        logging.info(end)
         # 转换为浮点数进行计算
-        hours, minutes, seconds_milliseconds = end.split(':')
-        seconds, milliseconds = seconds_milliseconds.split('.')
+        hours, minutes, seconds, milliseconds = end.split(':')
         hours = float(hours)
         minutes = float(minutes)
         end_float = hours * 3600 + minutes * 60 + float(seconds)
@@ -125,13 +125,49 @@ class FFmpeg:
                 # 将end时间转换为秒数浮点数计算后返回结束时间字符串
                 end_time = self.time_calculate(duration, end)
                 # 调用ffmpeg命令行工具，对视频进行截取
-                cmd = [overwrite, '-ss', start_time, '-to', end_time, '-accurate_seek', '-i', f'"{input_file}"',  encoder, f'"{output_file}"']
+                cmd = [
+                    overwrite, 
+                    '-ss', start_time, 
+                    '-to', end_time, 
+                    '-accurate_seek', 
+                    '-i', f'"{input_file}"',  
+                    encoder, 
+                    f'"{output_file}"']
                 # 打印最终输入命令行的cmd指令，从列表转换为字符串
                 # logging.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
                 self.run(cmd)
                 logging.info(file + '视频截取完成')
             else:
                 logging.info(file + '不是mp4文件，跳过')
+
+    # 截取视频(输入文件)
+    def extract_video_single(self, 
+        input_file, 
+        output_file, 
+        start_time, 
+        end, 
+        encoder='-c:v copy -c:a copy', 
+        overwrite='-y'
+    ):
+        start_time = start_time[:7] + '.' + start_time[8:]  # 转换为ffmpeg格式的时间格式
+        # 读取视频的总时长
+        duration = self.get_duration(input_file)
+        # 将end时间转换为秒数浮点数计算后返回结束时间字符串
+        end_time = self.time_calculate(duration, end)
+        # 调用ffmpeg命令行工具，对视频进行截取
+        cmd = [
+            overwrite, 
+            '-ss', start_time, 
+            '-to', end_time, 
+            '-accurate_seek', 
+            '-i', f'"{input_file}"',  
+            encoder, 
+            f'"{output_file}"']
+        # 打印最终输入命令行的cmd指令，从列表转换为字符串
+        # logging.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
+        self.run(cmd)
+        file = os.path.basename(input_file)
+        logging.info(file + '视频截取完成')
 
     # 合并视频(输入文件夹)
     def merge_video(self, input_folder, input_file1, input_file2, output_folder, encoder='-c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 192k -ar 44100 -ac 2', overwrite='-y'):
@@ -159,3 +195,37 @@ class FFmpeg:
                 logging.info(file + '视频合并完成')
             else:
                 logging.info(file + '不是mp4文件，跳过')
+
+    # 音频转码
+    def audio_encode(self, 
+        input_file, 
+        output_file, 
+        encoder = r'-acodec aac -b:a 128k ', 
+        overwrite='-y'):
+        cmd = [
+            overwrite, 
+            '-i', 
+            f'"{input_file}"', 
+            encoder, 
+            f'"{output_file}"'
+        ]
+        self.run(cmd)
+        file = os.path.basename(input_file)
+        logging.info(file + '音频转码完成')
+
+    # 视频转码
+    def video_encode(self, 
+        input_file, 
+        output_file, 
+        encoder = r'-vcodec libx264 -preset medium -crf 23 -acodec aac -b:a 128k', 
+        overwrite='-y'):
+        cmd = [
+            overwrite, 
+            '-i', 
+            f'"{input_file}"', 
+            encoder, 
+            f'"{output_file}"'
+        ]
+        self.run(cmd)
+        file = os.path.basename(input_file)
+        logging.info(file + '视频转码完成')
