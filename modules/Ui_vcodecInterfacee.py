@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
 from qfluentwidgets import (CheckBox, ComboBox, LineEdit, PlainTextEdit,
     PrimaryPushButton, SpinBox, TimeEdit)
 
-class Ui_Form(object):
+class Ui_VcodecInterfacee(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")

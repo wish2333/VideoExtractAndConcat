@@ -169,8 +169,30 @@ class FFmpeg:
         file = os.path.basename(input_file)
         logging.info(file + '视频截取完成')
 
+    def cut_video(self, 
+        input_file, 
+        output_file,
+        start_time, 
+        end_time, 
+        encoder='-c:v copy -c:a copy', 
+        overwrite='-y'
+    ):
+        start_time = start_time[:7] + '.' + start_time[8:]  # 转换为ffmpeg格式的时间格式
+        end_time = end_time[:7] + '.' + end_time[8:]  # 转换为ffmpeg格式的时间格式
+        cmd = [
+            overwrite, 
+            '-ss', start_time, 
+            '-to', end_time, 
+            '-accurate_seek', 
+            '-i', f'"{input_file}"',  
+            encoder, 
+            f'"{output_file}"']
+        self.run(cmd)
+        file = os.path.basename(input_file)
+        logging.info(file + '视频截取完成')
+
     # 合并视频(输入文件夹)
-    def merge_video(self, input_folder, input_file1, input_file2, output_folder, encoder='-c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 192k -ar 44100 -ac 2', overwrite='-y'):
+    def merge_video_folder(self, input_folder, input_file1, input_file2, output_folder, encoder='-c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 192k -ar 44100 -ac 2', overwrite='-y'):
         # 遍历文件夹中的所有mp4视频文件
         for file in os.listdir(input_folder):
             if file.endswith('.mp4'):
@@ -195,6 +217,62 @@ class FFmpeg:
                 logging.info(file + '视频合并完成')
             else:
                 logging.info(file + '不是mp4文件，跳过')
+    
+    # 合并视频(输入3个文件)
+    def merge_video(self, 
+        input_file, 
+        output_file, 
+        input_file1, 
+        input_file2, 
+        encoder='-c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 192k -ar 44100 -ac 2', 
+        resolution='1920:1080', 
+        fps='30', 
+        overwrite='-y'
+    ):
+        cmd = [
+            overwrite, 
+            '-i', f'"{input_file1}"', 
+            '-i', f'"{input_file}"', 
+            '-i', f'"{input_file2}"', 
+            '-filter_complex', 
+            f'"[0:v]fps={fps},scale={resolution},setsar=1[v0];[1:v]fps={fps},scale={resolution},setsar=1[v1];[2:v]fps={fps},scale={resolution},setsar=1[v2];[0:a]aformat=sample_rates=44100:channel_layouts=stereo[a0];[1:a]aformat=sample_rates=44100:channel_layouts=stereo[a1];[2:a]aformat=sample_rates=44100:channel_layouts=stereo[a2];[v0][a0][v1][a1][v2][a2]concat=n=3:v=1:a=1[vout][aout]" -map "[vout]" -map "[aout]"', 
+            encoder, 
+            f'"{output_file}"']
+        # 打印最终输入命令行的cmd指令，从列表转换为字符串
+        # logging.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
+        self.run(cmd)
+        file = os.path.basename(input_file)
+        logging.info(file + '视频截取完成')
+
+    # 合并视频(输入2个文件)
+    def merge_video_two(self, 
+        op_file, 
+        output_file, 
+        ed_file, 
+        encoder='-c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 192k -ar 44100 -ac 2', 
+        resolution='1920:1080', 
+        fps='30', 
+        overwrite='-y'
+    ):
+        cmd = [
+            overwrite, 
+            '-i', f'"{op_file}"', 
+            '-i', f'"{ed_file}"', 
+            '-filter_complex', 
+            f'"[0:v]fps={fps},scale={resolution},setsar=1[v0];[1:v]fps={fps},scale={resolution},setsar=1[v1];[0:a]aformat=sample_rates=44100:channel_layouts=stereo[a0];[1:a]aformat=sample_rates=44100:channel_layouts=stereo[a1];[v0][a0][v1][a1]concat=n=2:v=1:a=1[vout][aout]" -map "[vout]" -map "[aout]"', 
+            encoder, 
+            f'"{output_file}"']
+        # 打印最终输入命令行的cmd指令，从列表转换为字符串
+        # logging.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
+        self.run(cmd)
+        file = os.path.basename(output_file)
+        logging.info(file + '视频合并完成')
+
+    # 合并视频(concat)
+    # def concat_video(self, 
+    #     input_file1, 
+    #     input_file2, 
+    #     output_file, 
 
     # 音频转码
     def audio_encode(self, 
@@ -229,3 +307,22 @@ class FFmpeg:
         self.run(cmd)
         file = os.path.basename(input_file)
         logging.info(file + '视频转码完成')
+
+
+    def accelerated_encode(self, 
+        input_file, 
+        output_file, 
+        rate=1,
+        encoder = r'-vcodec libx264 -preset medium -crf 23 -acodec aac -b:a 128k', 
+        overwrite='-y'):
+        cmd = [
+            overwrite, 
+            '-i', 
+            f'"{input_file}"', 
+            f'-filter_complex "[0:v]setpts=PTS/{rate}[v];[0:a]atempo={rate}[a]" -map "[v]" -map "[a]"',
+            encoder, 
+            f'"{output_file}"'
+        ]
+        self.run(cmd)
+        file = os.path.basename(input_file)
+        logging.info(file + '视频加速完成')

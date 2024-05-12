@@ -1,12 +1,14 @@
 import logging
 import os
 
-from PySide6.QtCore import QThread, Signal, QObject
+from PySide6.QtCore import Qt, QThread, Signal, QObject
+from PySide6.QtGui import QPixmap, QPainter, QColor
 from PySide6.QtWidgets import QWidget, QFileDialog, QMessageBox
+from qfluentwidgets import MessageBox
 
 from modules.config import ffpath
 from modules.ffmpegApi import FFmpeg
-from modules.Ui_vencoInterface import Ui_Form
+from modules.Ui_vcodecInterfacee import Ui_VcodecInterfacee
 
 
 
@@ -52,7 +54,7 @@ class WorkerThread(QThread):
     def run(self):
         self.worker.run_ffmpeg_task()
 
-class VencoInterface(QWidget, Ui_Form):
+class VcodecInterface(QWidget, Ui_VcodecInterfacee):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setupUi(self)
@@ -147,7 +149,12 @@ class VencoInterface(QWidget, Ui_Form):
             if output_file_path:
                 self.lineEdit2.setText(output_file_path)
         else:
-            QMessageBox.information(self, "警告", "请先选择输入文件！", QMessageBox.Yes)
+            # QMessageBox.information(self, "警告", "请先选择输入文件！", QMessageBox.Yes)
+            w = MessageBox("警告", "请先选择输入文件！", parent=self)
+            if w.exec():
+                logging.info('确认,关闭警告窗口')
+            else:
+                logging.info('取消,关闭警告窗口')
 
     # open_file_3:audio
     def open_file_3(self):
@@ -162,7 +169,12 @@ class VencoInterface(QWidget, Ui_Form):
             if self.subtitle_file_path:
                 self.lineEdit4.setText(self.subtitle_file_path)
         else:
-            QMessageBox.information(self, "警告", "请先选择输入文件！", QMessageBox.Yes)
+            # QMessageBox.information(self, "警告", "请先选择输入文件！", QMessageBox.Yes)
+            w = MessageBox("警告", "请先选择输入文件！", parent=self)
+            if w.exec():
+                logging.info('确认,关闭警告窗口')
+            else:
+                logging.info('取消,关闭警告窗口')
 
 
 
@@ -308,44 +320,48 @@ class VencoInterface(QWidget, Ui_Form):
                 else:
                     # 有音频或字幕，功能省缺
                     ########
-                    QMessageBox.information(self, "提示", "音频或字幕功能暂未实现，请等待更新！", QMessageBox.Yes)
+                    # QMessageBox.information(self, "提示", "音频或字幕功能暂未实现，请等待更新！", QMessageBox.Yes)
+                    w = MessageBox("提示", "音频或字幕功能暂未实现，请等待更新！", parent=self)
+                    if w.exec():
+                        logging.info('确认,关闭提示窗口')
+                    else:
+                        logging.info('取消,关闭提示窗口')
                     self.lineEdit3.setText('')
                     self.lineEdit4.setText('')
                     ########
             else:
-                QMessageBox.warning(self, "警告", "输入文件不存在！", QMessageBox.Yes)
+                # QMessageBox.warning(self, "警告", "输入文件不存在！", QMessageBox.Yes)
+                w = MessageBox("提示", "输入文件不存在！", parent=self)
+                if w.exec():
+                    logging.info('确认,关闭提示窗口')
+                else:
+                    logging.info('取消,关闭提示窗口')
         # 如果输入输出不存在，音频存在，执行音频转码
         elif self.lineEdit1.text() == '' and self.lineEdit2.text() == '' and not self.lineEdit3.text() == '':
             self.custom_encoder = f'{self.acodec} {self.apreset} '  # 结尾要有空格
-            QMessageBox.information(self, "提示", f"进行音频转码，请选择输出文件，转码格式为{self.acodec} {self.apreset}", QMessageBox.Yes)
-            audio_output_file_path, _ = QFileDialog.getSaveFileName(self, "选择输出文件", self.lineEdit3.text(), "音频文件 (*.aac *.flac *.mp3 *.m4a *.wav *.wma *.ogg *.opus *.alac)")
-            # 开始音频转码
-            self.worker = Worker('audio_encode', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.lineEdit3.text(), audio_output_file_path, self.custom_encoder)  # 开启子进程
-            self.thread = WorkerThread(self.worker)
-            self.thread.started.connect(lambda: self.console.appendPlainText("开始音频转码"))  # 线程开始时显示提示信息
-            self.thread.finished.connect(lambda: self.console.appendPlainText("完成音频转码"))  # 线程结束时显示提示信息
-            self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
-            self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
-            self.thread.start()  # 开始线程
+            # QMessageBox.information(self, "提示", f"进行音频转码，请选择输出文件，转码格式为{self.acodec} {self.apreset}", QMessageBox.Yes)
+            w = MessageBox("提示", f"进行音频转码，请选择输出文件，转码格式为{self.acodec} {self.apreset}", parent=self)
+            if w.exec():
+                audio_output_file_path, _ = QFileDialog.getSaveFileName(self, "选择输出文件", self.lineEdit3.text(), "音频文件 (*.aac *.flac *.mp3 *.m4a *.wav *.wma *.ogg *.opus *.alac)")
+                # 开始音频转码
+                self.worker = Worker('audio_encode', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.lineEdit3.text(), audio_output_file_path, self.custom_encoder)  # 开启子进程
+                self.thread = WorkerThread(self.worker)
+                self.thread.started.connect(lambda: self.console.appendPlainText("开始音频转码"))  # 线程开始时显示提示信息
+                self.thread.finished.connect(lambda: self.console.appendPlainText("完成音频转码"))  # 线程结束时显示提示信息
+                self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
+                self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
+                self.thread.start()  # 开始线程
+            else:
+                logging.info('取消,关闭提示窗口')
             ######## 显示进度条 ########
             # 打开输出文件夹
             # 判断是否成功
                 # os.startfile(os.path.dirname(audio_output_file_path))
         # 如果输出都不存在，则提示选择文件
         elif not self.lineEdit1.text() == '' and self.lineEdit2.text() == '':
-            QMessageBox.warning(self, "警告", "请选择输出文件！", QMessageBox.Yes)
-        
-
-
-
-
-            
-
-
-
-
-
-
-
-# if not self.timeEdit.text() == '0:00:00:000' and not self.timeEdit_2.text() == '0:00:00:000':
-#     self.console.appendPlainText("执行切割任务，请稍等...")
+            # QMessageBox.warning(self, "警告", "请选择输出文件！", QMessageBox.Yes)
+            w = MessageBox("警告", "请选择输出文件！", parent=self)
+            if w.exec():
+                logging.info('确认,关闭警告窗口')
+            else:
+                logging.info('取消,关闭警告窗口')
