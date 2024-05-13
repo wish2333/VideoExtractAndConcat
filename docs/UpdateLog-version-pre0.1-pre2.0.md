@@ -4,7 +4,7 @@
 
 UI重构，参考[PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)和[MihiroToolbox](https://github.com/Eanya-Tonic/MihiroToolbox)构造UI和功能分布
 
-![image](https://github.com/wish2333/VideoExtractAndConcat/blob/master/docs/snapshot/VideoExtractAndConcat-version-pre2.0.jpg)
+![verison-pre2.0](https://github.com/wish2333/VideoExtractAndConcat/blob/master/docs/snapshot/VideoExtractAndConcat-version-pre2.0.jpg)
 
 目前仅完成单文件（音视频）转码裁切的功能面板，且功能暂未完善（如字幕封装、音频替换封装等）
 

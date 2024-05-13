@@ -6,19 +6,24 @@
 
 **未完成的优化，计划的项有：**
 
-- [ ] 优化性能
+- [x] 优化性能
 - [ ] 中止处理
 - [x] 允许调出控制台
 - [x] 使FFmpeg运行时的输出返回到控制台
-- [ ] 使合并流程能够识别两段视频的合并（目前必须同时传入片头片尾）
+- [x] 使合并流程能够识别两段视频的合并（目前必须同时传入片头片尾）
 - [x] 窗口美化
 - [x] 打包依赖库
 - [x] 封装bat或exe
 - [ ] 其他
+  - [x] 加速滤镜功能
+  - [x] 切割时间段功能
 
-## 使用指南（20240507）
 
-下载release包，解压后打开exe文件即可！
+## 使用指南（20240507/20240513）
+
+下载release包，解压后打开exe或bat文件即可！
+
+ffmpegApi.py更新见[DETAIL20240513.md](docs\DETAIL20240513.md)
 
 ## 源码使用指南（20240506）
 
@@ -46,13 +51,21 @@ pip install pyside6
 python main.py
 ```
 
-4. 不安装pyside6、不调用gui，以代码形式运行，可以对ffmpegApi.py直接调用：见[DETAIL.md](DETAIL.md)中调试用代码部分。
+4. 不安装pyside6、不调用gui，以代码形式运行，可以对ffmpegApi.py直接调用：见[DETAIL20240506.md](docs\DETAIL20240506.md)中调试用代码部分。
 
 ## 快照
+
+![version-pre3.0](https://github.com/wish2333/VideoExtractAndConcat/blob/master/docs/snapshot/VideoExtractAndConcat-version-pre3.0.jpg)
 
 ![version-pre2.0](https://github.com/wish2333/VideoExtractAndConcat/blob/master/docs/snapshot/VideoExtractAndConcat-version-pre2.0.jpg)
 
 # 更新日志
+
+详细日志见[UpdateLog-version-pre3.0-.md](docs\UpdateLog-version-pre3.0-.md)、[UpdateLog-version-pre0.1-pre2.0.md](docs\UpdateLog-version-pre0.1-pre2.0.md)
+
+## Update20240513-version-pre3.0
+
+实现批处理界面，添加了加速、切割时间段和合并片头片尾功能，部分逻辑以及API接口函数有所修改，后续调用需要注意
 
 ## Update 20240511-version-pre2.0
 

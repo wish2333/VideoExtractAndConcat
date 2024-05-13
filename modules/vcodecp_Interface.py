@@ -188,10 +188,12 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
     
     #  File_operation
     def select_input_file(self):
-        self.input_file_args, _ = QFileDialog.getOpenFileNames(self, "选择输入文件", "", "All Files (*)")
-        for file_path in self.input_file_args:
-            item = QListWidgetItem(file_path)
-            self.VcodecpIFinputlist.addItem(item)
+        self.append_input_file_args, _ = QFileDialog.getOpenFileNames(self, "选择输入文件", "", "All Files (*)")
+        for file_path in self.append_input_file_args:
+            if file_path not in self.input_file_args:
+                self.input_file_args.append(file_path)
+                item = QListWidgetItem(file_path)
+                self.VcodecpIFinputlist.addItem(item)
 
     def select_output_folder(self):
         if self.input_file_args != []:
@@ -330,60 +332,7 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
             
 
 
-    # Encoding Config
-    def encoding(self):
-        self.debugflag_of_filter_config = False  # 调试模式
-        self.debug_of_filter_config()
-        if self.debugflag_of_filter_config:
-            # 是否传入文件
-            # 如果输入文件和输出文件都存在，则执行转码任务
-            self.freeze_config('正在执行转码任务，请稍等...')
-            if self.input_file_args != [] and self.output_file_args != []:
-                while self.i < (len(self.input_file_args)):
-                    if self.is_paused:  # 若暂停，则不进行循环
-                        break
-                    self.simple_encoding()
-                    self.accelerated_encoding()
-                    self.extract_or_cut_video()
-                    self.merge_or_concat_video()
-                else:
-                    self.i = 0  # 循环计数器清零
-                    self.VcodecpIFconsole.appendPlainText("全部转码任务完成！")
-                    self.clear_input_file()
-                self.unfreeze_config()
 
-            # 如果输入文件存在，但输出文件不存在，则弹出提示框，ok进入选择，cancel退出
-            elif self.input_file_args != [] and self.output_file_args == []:
-                warn = MessageBox("警告", "请先选择输出文件夹！", parent=self)
-                if warn.exec():
-                    self.select_output_folder()
-                    if_continue = MessageBox("提示", "是否继续执行？", parent=self)
-                    if if_continue.exec():
-                        self.simple_encoding()
-                        self.accelerated_encoding()
-                        self.extract_or_cut_video()
-                        self.merge_or_concat_video()
-                else:
-                    self.i = 0  # 循环计数器清零
-                    self.unfreeze_config()
-
-            # 如果输入文件不存在，则弹出提示框，ok退出，cancel进入选择
-            elif self.input_file_args == []:
-                MessageBox("警告", "请先选择输入文件！", parent=self).exec()
-                self.clear_input_file()
-                self.unfreeze_config()
-
-
-    
-    def on_thread_started(self):
-        self.is_paused = True  # 开启暂停标志
-        logging.info(f'线程创建，暂停循环，i={self.i}')
-    def on_thread_finished(self):
-        self.is_paused = False  # 重置暂停标志
-        self.i = self.i + 1  # 开启下一个文件
-        logging.info(f'{self.i-1}线程结束，开始循环，i={self.i}')
-        self.encoding()  # 开启下一个线程
-    
     # 简单转码任务
     def simple_encoding(self):
         input_file = self.input_file_args[self.i]
@@ -432,6 +381,7 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         output_file = self.output_file_args[self.i]
         if os.path.isfile(input_file) and not self.VcodecpIFcheckBox_4.isChecked() and not self.VcodecpIFcheckBox_merge.isChecked():
             if self.VcodecpIFtimeEdit_3.text() != '0:00:00:000' or self.VcodecpIFtimeEdit_2.text() != '0:00:00:000':
+                # 如果选择了片尾时长，执行切割片尾模式
                 if self.VcodecpIFradioButton.isChecked():
                     self.VcodecpIFconsole.appendPlainText("执行切割任务，请稍等...")
                     self.worker = Worker('extract_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, input_file, output_file, self.VcodecpIFtimeEdit_3.text(), self.VcodecpIFtimeEdit_2.text(), self.VcodecpIFplainTextEdit.toPlainText())  # 开启子进程
@@ -445,6 +395,7 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
                     self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
                     self.thread.finished.connect(self.on_thread_finished)  # 线程结束时开启下一个线程
                     self.thread.start()  # 开始线程
+                # 如果选择了结束时间，执行时间段切割模式
                 elif self.VcodecpIFradioButton_2.isChecked():
                     self.VcodecpIFconsole.appendPlainText("执行切割任务，请稍等...")
                     self.worker = Worker('cut_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, input_file, output_file, self.VcodecpIFtimeEdit_3.text(), self.VcodecpIFtimeEdit_2.text(), self.VcodecpIFplainTextEdit.toPlainText())  # 开启子进程
@@ -503,17 +454,17 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
             self.VcodecpIFconsole.appendPlainText("执行合并任务，请稍等...")
             if self.VcodecpIFcheckBox_2.isChecked() and self.VcodecpIFcheckBox_3.isChecked():
                 resolution = self.VcodecpIFlineEdit.text().replace('x', ':')  # 将resolution的x改为：
-                self.worker = Worker('merge_video_two', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.merge_input_file, self.merge_output_file, self.op_file, self.ed_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution, self.VcodecpIFlineEdit_2.text())  # 开启子进程
+                self.worker = Worker('merge_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.merge_input_file, self.merge_output_file, self.op_file, self.ed_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution, self.VcodecpIFlineEdit_2.text())  # 开启子进程
             elif self.VcodecpIFcheckBox_2.isChecked() and not self.VcodecpIFcheckBox_3.isChecked():
                 resolution = self.VcodecpIFlineEdit.text().replace('x', ':')  # 将resolution的x改为：
-                self.worker = Worker('merge_video_two', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.merge_input_file, self.merge_output_file, self.op_file, self.ed_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution)  # 开启子进程
+                self.worker = Worker('merge_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.merge_input_file, self.merge_output_file, self.op_file, self.ed_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution)  # 开启子进程
             elif not self.VcodecpIFcheckBox_2.isChecked() and self.VcodecpIFcheckBox_3.isChecked():
                 resolution = '1920:1080'  # 默认值
-                self.worker = Worker('merge_video_two', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.merge_input_file, self.merge_output_file, self.op_file, self.ed_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution, self.VcodecpIFlineEdit_2.text())  # 开启子进程
+                self.worker = Worker('merge_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.merge_input_file, self.merge_output_file, self.op_file, self.ed_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution, self.VcodecpIFlineEdit_2.text())  # 开启子进程
             elif not self.VcodecpIFcheckBox_2.isChecked() and not self.VcodecpIFcheckBox_3.isChecked():
                 resolution = '1920:1080'  # 默认值
                 fps = 30  # 默认值
-                self.worker = Worker('merge_video_two', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.merge_input_file, self.merge_output_file, self.op_file, self.ed_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution, fps)  # 开启子进程
+                self.worker = Worker('merge_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.merge_input_file, self.merge_output_file, self.op_file, self.ed_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution, fps)  # 开启子进程
             self.thread = WorkerThread(self.worker)
             self.thread.started.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{self.merge_input_file}开始视频合并"))  # 线程开始时显示提示信息
             logging.info(f"Merge video task started, input file: {self.merge_input_file}, output file: {self.merge_output_file}")
@@ -641,6 +592,59 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         self.VcodecpIFpushButton_3.setText('选择片头')
         self.VcodecpIFpushButton_4.setText('选择片尾')
     
+
+        # Encoding Config
+    def encoding(self):
+        self.debugflag_of_filter_config = False  # 调试模式
+        self.debug_of_filter_config()
+        if self.debugflag_of_filter_config:
+            # 是否传入文件
+            # 如果输入文件和输出文件都存在，则执行转码任务
+            self.freeze_config('正在执行转码任务，请稍等...')
+            if self.input_file_args != [] and self.output_file_args != []:
+                while self.i < (len(self.input_file_args)):
+                    if self.is_paused:  # 若暂停，则不进行循环
+                        break
+                    self.simple_encoding()
+                    self.accelerated_encoding()
+                    self.extract_or_cut_video()
+                    self.merge_or_concat_video()
+                else:
+                    self.i = 0  # 循环计数器清零
+                    self.VcodecpIFconsole.appendPlainText("全部转码任务完成！")
+                    self.clear_input_file()
+                    self.unfreeze_config()
+
+            # 如果输入文件存在，但输出文件不存在，则弹出提示框，ok进入选择，cancel退出
+            elif self.input_file_args != [] and self.output_file_args == []:
+                warn = MessageBox("警告", "请先选择输出文件夹！", parent=self)
+                if warn.exec():
+                    self.select_output_folder()
+                    if_continue = MessageBox("提示", "是否继续执行？", parent=self)
+                    if if_continue.exec():
+                        self.simple_encoding()
+                        self.accelerated_encoding()
+                        self.extract_or_cut_video()
+                        self.merge_or_concat_video()
+                else:
+                    self.i = 0  # 循环计数器清零
+                    self.unfreeze_config()
+
+            # 如果输入文件不存在，则弹出提示框，ok退出，cancel进入选择
+            elif self.input_file_args == []:
+                MessageBox("警告", "请先选择输入文件！", parent=self).exec()
+                self.clear_input_file()
+                self.unfreeze_config()
+    
+    def on_thread_started(self):
+        self.is_paused = True  # 开启暂停标志
+        logging.info(f'线程创建，暂停循环，i={self.i}')
+    def on_thread_finished(self):
+        self.is_paused = False  # 重置暂停标志
+        self.i = self.i + 1  # 开启下一个文件
+        logging.info(f'{self.i-1}线程结束，开始循环，i={self.i}')
+        self.encoding()  # 开启下一个线程
+
     def freeze_config(self, text=''):
         self.VcodecpIFlineEditVE.setEnabled(False)  # 禁止修改视频编码器
         self.VcodecpIFlineEditAE.setEnabled(False)  # 禁止修改音频编码器
@@ -667,7 +671,7 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         self.VcodecpIFpushButton_4.setEnabled(False)  # 禁止选择结尾文件
         self.VcodecpIFplainTextEdit.setEnabled(False)  # 禁止自定义编码参数
         logging.info(f"Freeze config. {text}")
-        self.VcodecpIFconsole.appendPlainText("冻结配置")
+        # self.VcodecpIFconsole.appendPlainText("冻结配置")
     def unfreeze_config(self):
         self.VcodecpIFlineEditVE.setEnabled(True)  # 解除禁止修改视频编码器
         self.VcodecpIFlineEditAE.setEnabled(True)  # 解除禁止修改音频编码器
@@ -694,4 +698,4 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         self.VcodecpIFpushButton_4.setEnabled(True)  # 解除禁止选择结尾文件
         self.VcodecpIFplainTextEdit.setEnabled(True)  # 禁止自定义编码参数
         logging.info("Unfreeze config.")
-        self.VcodecpIFconsole.appendPlainText("解除冻结配置")
+        # self.VcodecpIFconsole.appendPlainText("解除冻结配置")
