@@ -23,7 +23,7 @@
 
 下载release包，解压后打开exe或bat文件即可！
 
-ffmpegApi.py更新见[DETAIL20240513.md](docs\DETAIL20240513.md)
+ffmpegApi.py更新见[DETAIL20240513.md](docs/DETAIL20240513.md)
 
 ## 源码使用指南（20240506）
 
@@ -61,7 +61,7 @@ python main.py
 
 # 更新日志
 
-详细日志见[UpdateLog-version-pre3.0-.md](docs\UpdateLog-version-pre3.0-.md)、[UpdateLog-version-pre0.1-pre2.0.md](docs\UpdateLog-version-pre0.1-pre2.0.md)
+详细日志见[UpdateLog-version-pre3.0-.md](docs/UpdateLog-version-pre3.0-.md)、[UpdateLog-version-pre0.1-pre2.0.md](docs/UpdateLog-version-pre0.1-pre2.0.md)
 
 ## Update20240513-version-pre3.0
 
