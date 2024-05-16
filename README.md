@@ -58,7 +58,7 @@ python main.py
 
 ![version-pre2.0](https://github.com/wish2333/VideoExtractAndConcat/blob/master/docs/snapshot/VideoExtractAndConcat-version-pre2.0.jpg)
 
-# # 更新日志
+# 更新日志
 
 详细日志见[UpdateLog-version-pre3.0-.md](docs/UpdateLog-version-pre3.0-.md)、[UpdateLog-version-pre0.1-pre2.0.md](docs/UpdateLog-version-pre0.1-pre2.0.md)
 
@@ -86,6 +86,10 @@ python main.py
 - [x] 进程中止
    - [x] 发出中止信号→导致软件闪退
    - [ ] subprocess中止
+
+## Update20240516-version-pre4.0
+
+实现了常规界面about\setting，支持修改FFmpeg，优化视频界面
 
 ## Update20240513-version-pre3.0
 
