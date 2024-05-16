@@ -126,6 +126,7 @@ class FFmpeg:
                 end_time = self.time_calculate(duration, end)
                 # 调用ffmpeg命令行工具，对视频进行截取
                 cmd = [
+                    '-hide_banner',
                     overwrite, 
                     '-ss', start_time, 
                     '-to', end_time, 
@@ -156,6 +157,7 @@ class FFmpeg:
         end_time = self.time_calculate(duration, end)
         # 调用ffmpeg命令行工具，对视频进行截取
         cmd = [
+            '-hide_banner',
             overwrite, 
             '-ss', start_time, 
             '-to', end_time, 
@@ -180,6 +182,7 @@ class FFmpeg:
         start_time = start_time[:7] + '.' + start_time[8:]  # 转换为ffmpeg格式的时间格式
         end_time = end_time[:7] + '.' + end_time[8:]  # 转换为ffmpeg格式的时间格式
         cmd = [
+            '-hide_banner',
             overwrite, 
             '-ss', start_time, 
             '-to', end_time, 
@@ -203,6 +206,7 @@ class FFmpeg:
                 output_file = os.path.join(output_folder, file)
                 # 调用ffmpeg命令行工具，对视频进行合并
                 cmd = [
+                    '-hide_banner',
                     overwrite, 
                     '-i', f'"{input_file1}"', 
                     '-i', f'"{input_file}"', 
@@ -230,6 +234,7 @@ class FFmpeg:
         overwrite='-y'
     ):
         cmd = [
+            '-hide_banner',
             overwrite, 
             '-i', f'"{input_file1}"', 
             '-i', f'"{input_file}"', 
@@ -255,6 +260,7 @@ class FFmpeg:
         overwrite='-y'
     ):
         cmd = [
+            '-hide_banner',
             overwrite, 
             '-i', f'"{op_file}"', 
             '-i', f'"{ed_file}"', 
@@ -281,6 +287,7 @@ class FFmpeg:
         encoder = r'-acodec aac -b:a 128k ', 
         overwrite='-y'):
         cmd = [
+            '-hide_banner',
             overwrite, 
             '-i', 
             f'"{input_file}"', 
@@ -298,6 +305,7 @@ class FFmpeg:
         encoder = r'-vcodec libx264 -preset medium -crf 23 -acodec aac -b:a 128k', 
         overwrite='-y'):
         cmd = [
+            '-hide_banner',
             overwrite, 
             '-i', 
             f'"{input_file}"', 
@@ -308,7 +316,7 @@ class FFmpeg:
         file = os.path.basename(input_file)
         logging.info(file + '视频转码完成')
 
-
+    # 加速转码
     def accelerated_encode(self, 
         input_file, 
         output_file, 
@@ -316,6 +324,7 @@ class FFmpeg:
         encoder = r'-vcodec libx264 -preset medium -crf 23 -acodec aac -b:a 128k', 
         overwrite='-y'):
         cmd = [
+            '-hide_banner',
             overwrite, 
             '-i', 
             f'"{input_file}"', 

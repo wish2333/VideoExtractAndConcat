@@ -4,10 +4,13 @@ import logging
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication, QWidget
-from qfluentwidgets import FluentWindow, FluentIcon
+from qfluentwidgets import FluentWindow, FluentIcon, NavigationItemPosition
 # 自定义模块
 from modules.vcodec_Interface import VcodecInterface
 from modules.vcodecp_Interface import VcodecpInterface
+from modules.setting_Interface import SettingInterface
+from modules.about_Interface import AboutInterface
+from modules.config import init_ffpath
 
 # 初始化logger
 logger = logging.getLogger()
@@ -27,6 +30,7 @@ class mainWindow(FluentWindow):
         self.init_windows()
         self.init_widget()
         self.init_navigation()
+        self.init_config()
 
         
     def init_windows(self):
@@ -35,16 +39,23 @@ class mainWindow(FluentWindow):
         self.setWindowTitle("VideoExtractAndConcat")  # 设置窗口标题
 
     def init_widget(self):
-        self.homeInterface = VcodecInterface(self)
+        self.siglevideoInterface = VcodecInterface(self)
         self.videoInterface = VcodecpInterface(self)
+        self.SettingInterface = SettingInterface(self)
+        self.AboutInterface = AboutInterface(self)
 
     def init_navigation(self):
-        self.addSubInterface(self.homeInterface, FluentIcon.HOME, "Home")
-        self.addSubInterface(self.videoInterface, FluentIcon.VIDEO, "Video")
+        
+        self.addSubInterface(self.videoInterface, FluentIcon.HOME, "Home")
+        self.addSubInterface(self.siglevideoInterface, FluentIcon.VIDEO, "Single Video")
 
         # self.navigationInterface.addSeparator()
 
-        # self.addSubInterface(self.settingInterface, FluentIcon.SETTINGS, "Setting")
+        self.addSubInterface(self.AboutInterface, FluentIcon.INFO, "About", NavigationItemPosition.BOTTOM)
+        self.addSubInterface(self.SettingInterface, FluentIcon.SETTING, "Setting", NavigationItemPosition.BOTTOM)
+
+    def init_config(self):
+        init_ffpath()
 
 
 

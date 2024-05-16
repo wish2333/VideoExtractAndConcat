@@ -70,7 +70,7 @@
              </property>
              <property name="maximumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>64</height>
               </size>
              </property>
@@ -82,7 +82,7 @@
               </font>
              </property>
              <property name="text">
-              <string>滤镜</string>
+              <string>批处理</string>
              </property>
             </widget>
            </item>
@@ -108,7 +108,7 @@
               </font>
              </property>
              <property name="text">
-              <string>文件</string>
+              <string>视频</string>
              </property>
             </widget>
            </item>
@@ -116,6 +116,12 @@
          </item>
          <item>
           <widget class="QLabel" name="label">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>80</height>
+            </size>
+           </property>
            <property name="text">
             <string>不改变后缀名的批量处理</string>
            </property>
@@ -166,6 +172,25 @@
            </property>
            <property name="flat">
             <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="VcodecpIFSTBtn">
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>60</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>16</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>中止处理</string>
            </property>
           </widget>
          </item>
@@ -849,7 +874,141 @@
             <enum>QFrame::Shadow::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="2" column="0">
+            <item row="9" column="1">
+             <widget class="CheckBox" name="VcodecpIFcheckBox_5">
+              <property name="text">
+               <string>不重新编码（不推荐，未实现）</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QLabel" name="VcodecpIFlabel_9">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>连接片尾</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="CheckBox" name="VcodecpIFcheckBox_4">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>35</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>40</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>加速倍率</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="TimeEdit" name="VcodecpIFtimeEdit_3">
+              <property name="minimumSize">
+               <size>
+                <width>160</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <kerning>true</kerning>
+               </font>
+              </property>
+              <property name="displayFormat">
+               <string>H:mm:ss:zzz</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="RadioButton" name="VcodecpIFradioButton_2">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>结束时间</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLabel" name="VcodecpIFlabel_8">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>连接片头</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0">
+             <widget class="TimeEdit" name="VcodecpIFtimeEdit_2">
+              <property name="minimumSize">
+               <size>
+                <width>160</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <kerning>true</kerning>
+               </font>
+              </property>
+              <property name="displayFormat">
+               <string>H:mm:ss:zzz</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="CheckBox" name="VcodecpIFcheckBox_merge">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>合并视频</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
              <widget class="QLabel" name="VcodecpIFlabel_2">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -881,7 +1040,7 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
+            <item row="7" column="0">
              <widget class="RadioButton" name="VcodecpIFradioButton">
               <property name="maximumSize">
                <size>
@@ -903,82 +1062,7 @@
               </property>
              </widget>
             </item>
-            <item row="7" column="0">
-             <widget class="TimeEdit" name="VcodecpIFtimeEdit_2">
-              <property name="minimumSize">
-               <size>
-                <width>160</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <kerning>true</kerning>
-               </font>
-              </property>
-              <property name="displayFormat">
-               <string>H:mm:ss:zzz</string>
-              </property>
-             </widget>
-            </item>
             <item row="5" column="1">
-             <widget class="QLabel" name="VcodecpIFlabel_9">
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>连接片尾</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="TimeEdit" name="VcodecpIFtimeEdit_3">
-              <property name="minimumSize">
-               <size>
-                <width>160</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <kerning>true</kerning>
-               </font>
-              </property>
-              <property name="displayFormat">
-               <string>H:mm:ss:zzz</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="PushButton" name="VcodecpIFpushButton_4">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>选择片尾</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
              <widget class="PushButton" name="VcodecpIFpushButton_3">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -1002,20 +1086,31 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
-             <widget class="QLabel" name="VcodecpIFlabel_8">
+            <item row="8" column="1">
+             <widget class="PushButton" name="VcodecpIFpushButton_4">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
               <property name="font">
                <font>
                 <pointsize>12</pointsize>
-                <bold>true</bold>
                </font>
               </property>
               <property name="text">
-               <string>连接片头</string>
+               <string>选择片尾</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="2" column="1">
              <widget class="DoubleSpinBox" name="VcodecpIFdoubleSpinBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -1049,80 +1144,36 @@
               </property>
              </widget>
             </item>
-            <item row="7" column="1">
-             <widget class="CheckBox" name="VcodecpIFcheckBox_5">
-              <property name="text">
-               <string>不重新编码（不推荐，未实现）</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="RadioButton" name="VcodecpIFradioButton_2">
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>20</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>结束时间</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="CheckBox" name="VcodecpIFcheckBox_4">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
+            <item row="1" column="0">
+             <widget class="PushButton" name="VcodecpIFClearFil">
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>35</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
                 <height>40</height>
                </size>
               </property>
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>加速倍率</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="CheckBox" name="VcodecpIFcheckBox_merge">
-              <property name="font">
-               <font>
-                <pointsize>12</pointsize>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="text">
-               <string>合并视频</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="PushButton" name="VcodecpIFClearFil">
               <property name="text">
                <string>清除设置</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="CheckBox" name="VcodecpIFcheckBox_extract">
+              <property name="font">
+               <font>
+                <pointsize>12</pointsize>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>切割视频</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLineEdit" name="VcodecpIFcutsomFilter">
+              <property name="text">
+               <string>自定义滤镜预留</string>
               </property>
              </widget>
             </item>

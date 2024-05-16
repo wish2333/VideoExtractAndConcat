@@ -94,6 +94,7 @@ class VcodecInterface(QWidget, Ui_VcodecInterfacee):
         self.comboBox_5.setEnabled(False)  # 禁止修改profile
     # Init_print
     def init_print(self):
+        logging.info("VideoCodecInterface模块初始化完成！")
         # Welcome message
         self.console.appendPlainText("欢迎使用FFmpeg-python视频处理工具！")
         # encoder

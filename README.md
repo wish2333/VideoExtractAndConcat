@@ -15,9 +15,8 @@
 - [x] 打包依赖库
 - [x] 封装bat或exe
 - [ ] 其他
-  - [x] 加速滤镜功能
-  - [x] 切割时间段功能
-
+   - [x] 加速滤镜功能
+   - [x] 切割时间段功能
 
 ## 使用指南（20240507/20240513）
 
@@ -36,7 +35,7 @@ pip install pyside6
 2. 安装FFmpeg到main.py目录下，文件树结构如下
 
 ```
-├── FFmpeg    	# 注意大写           
+├── FFmpeg        # 注意大写           
 │   └── bin
 │   └── ...
 ├── main.py     # 主程序
@@ -59,9 +58,34 @@ python main.py
 
 ![version-pre2.0](https://github.com/wish2333/VideoExtractAndConcat/blob/master/docs/snapshot/VideoExtractAndConcat-version-pre2.0.jpg)
 
-# 更新日志
+# # 更新日志
 
 详细日志见[UpdateLog-version-pre3.0-.md](docs/UpdateLog-version-pre3.0-.md)、[UpdateLog-version-pre0.1-pre2.0.md](docs/UpdateLog-version-pre0.1-pre2.0.md)
+
+## 规划进度
+
+- [ ] 视频界面
+   - [x] 锁片头尾
+   - [ ] 转码参数
+      - [ ] 码率
+      - [ ] 提示
+   - [ ] 添加音轨
+- [ ] 音频界面
+   - [ ] 批量处理音频
+   - [ ] 加封面
+- [ ] 字幕界面
+   - [ ] 批量添加字幕
+- [ ] ffmpeg自定义参数界面
+   - [ ] 复杂滤镜
+- [ ] 读取界面
+   - [ ] ffprobe
+- [x] 设定界面
+   - [x] ffmpeg路径设置→每次封装记得删ini里面的参数
+- [x] 关于界面
+- [ ] 转封装、提取音频视频字幕、
+- [x] 进程中止
+   - [x] 发出中止信号→导致软件闪退
+   - [ ] subprocess中止
 
 ## Update20240513-version-pre3.0
 
@@ -108,22 +132,12 @@ version-pre1.1弃用
 
 - [x] 对version函数的修改
 - [x] 对extract函数的修改
-  - [x] async def get_duration
-  - [x] asyncio.run(run_async())
+   - [x] async def get_duration
+   - [x] asyncio.run(run_async())
 - [x] 对merge函数的修改
 - [x] 处理overwrite事件（默认覆盖-y或不覆盖-n）
 
-### 下一步修改目标
-
-- [ ] overwrite选项UI实现
-- [ ] 双文件合并选项核心逻辑实现、UI实现
-- [ ] UI重构，为后续功能预留空间
-  - [ ] 源代码链接
-  - [ ] Browse同步textEdit
-  - [ ] 每个功能一栏
-- [ ] 后续功能预想
-  - [ ] 单文件、多文件转码
-  - [ ] 编码格式选项实现
+# 
 
 ## Release 20240508-1517
 
@@ -150,4 +164,3 @@ version-pre1.1弃用
 [PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)
 
 [MihiroToolbox](https://github.com/Eanya-Tonic/MihiroToolbox)
-
