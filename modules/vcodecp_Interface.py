@@ -15,8 +15,9 @@ class Worker(QObject):
     started = Signal()  # 任务开始时发出的信号
     finished = Signal()  # 任务完成时发出的信号
     interrupted = Signal()  # 任务被中断时发出的信号
+    callback = Signal()  # 任务执行过程中输出的信号
 
-    def __init__(self, task_type, ffmpeg_path, ffprobe_path, *task_args):
+    def __init__(self, task_type, ffmpeg_path, ffprobe_path, *task_args, callback=None):
         super().__init__()
         self.task_type = task_type
         self.ffmpeg_path = ffmpeg_path
@@ -25,6 +26,18 @@ class Worker(QObject):
         logging.info(f"Simple {task_type} task started")
         self._started_flag = False  # 任务是否开始的标志
         self._interrupted_flag = False  # 任务是否被中断的标志
+        self.callback = callback  # 任务执行过程中输出的回调函数
+        self.is_interrupted = False  # 任务被中断时的回调函数
+    def interrupt(self):
+        self._interrupted_flag = True  # 设置任务被中断的标志
+        self.ffmpeg_instance.update_interrupt_flag(self._interrupted_flag)  # 更新全局中断标志
+        logging.info('中止信号已发出')
+    def interrupted_callback(self):
+        logging.info('中止信号回调，worker任务被中断')
+        self.is_interrupted = True  # 设置任务被中断的标志
+        if callable(self.callback):
+            self.callback()
+        self.interrupted.emit()  # 发出中断信号
 
     def run_ffmpeg_task(self):
         self._started_flag = True  # 任务开始的标志
@@ -50,36 +63,29 @@ class Worker(QObject):
 
     # 在这里可以添加更多任务类型的判断和调用
     def extract_video(self, input_folder, output_folder, start_time, end_time, encoder, overwrite='-y'):
-        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
-        ffmpeg_instance.extract_video_single(input_folder, output_folder, start_time, end_time, encoder, overwrite)
+        self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
+        self.ffmpeg_instance.extract_video_single(input_folder, output_folder, start_time, end_time, encoder, overwrite)
     def cut_video(self, input_folder, output_folder, start_time, end_time, encoder, overwrite='-y'):
-        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
-        ffmpeg_instance.cut_video(input_folder, output_folder, start_time, end_time, encoder, overwrite)
+        self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
+        self.ffmpeg_instance.cut_video(input_folder, output_folder, start_time, end_time, encoder, overwrite)
     def audio_encode(self, input_file, output_file, encoder, overwrite='-y'):
-        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
-        ffmpeg_instance.audio_encode(input_file, output_file, encoder, overwrite)
+        self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
+        self.ffmpeg_instance.audio_encode(input_file, output_file, encoder, overwrite)
     def video_encode(self, input_file, output_file, encoder, overwrite='-y'):
-        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
-        ffmpeg_instance.video_encode(input_file, output_file, encoder, overwrite)
+        self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
+        self.ffmpeg_instance.video_encode(input_file, output_file, encoder, overwrite)
     def accelerated_encode(self, input_file, output_file, rate, encoder, overwrite='-y'):
-        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
-        ffmpeg_instance.accelerated_encode(input_file, output_file, rate, encoder, overwrite)
+        self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
+        self.ffmpeg_instance.accelerated_encode(input_file, output_file, rate, encoder, overwrite)
     def merge_video(self, input_files, output_file, op_file, ed_file, encoder, resolution='1920:1080', fps='30', overwrite='-y'):
-        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
-        ffmpeg_instance.merge_video(input_files, output_file, op_file, ed_file, encoder, resolution, fps, overwrite)
+        self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
+        self.ffmpeg_instance.merge_video(input_files, output_file, op_file, ed_file, encoder, resolution, fps, overwrite)
     def merge_video_two(self, op_files, output_file, ed_file, encoder, resolution='1920:1080', fps='30', overwrite='-y'):
-        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
-        ffmpeg_instance.merge_video_two(op_files, output_file, ed_file, encoder, resolution, fps, overwrite)
+        self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
+        self.ffmpeg_instance.merge_video_two(op_files, output_file, ed_file, encoder, resolution, fps, overwrite)
     def concat_video(self, input_files, output_file, op_file, ed_file, encoder, overwrite='-y'):
-        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
-        ffmpeg_instance.concat_video(input_files, output_file, op_file, ed_file, encoder, overwrite)
-
-    # 任务被中断时执行的函数
-    def request_interruption(self):
-        self._interrupted_flag = True
-        self.interrupted.emit()  # 任务被中断，发出信号
-    def should_interrupt(self):
-        return self._interrupted_flag  # 返回是否被中断的标志
+        self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
+        self.ffmpeg_instance.concat_video(input_files, output_file, op_file, ed_file, encoder, overwrite)
 
 
 
@@ -765,13 +771,14 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         if self.worker._started_flag:
             self.is_paused = True  # 开启暂停标志
             logging.info(f'暂停循环，i={self.i}')
-            self.worker.request_interruption()  # 停止worker
-            self.thread.quit()  # 退出线程
-            self.worker.request_interruption()  # 停止worker
-            self.worker.deleteLater()  # 删除worker对象
-            self.thread.deleteLater()  # 删除线程对象
-            self._started_flag = False
-            self.is_paused = False  # 重置暂停标志
-            self.i = 0
-            self.unfreeze_config()
-            MessageBox("警告", "转码任务已暂停！软件即将退出，请重新启动！", parent=self).exec()
+            self.i = 2600000000  # 设定一个很大的数值，使线程结束
+            self.worker.interrupt()  # 停止worker
+            if self.worker.is_interrupted:  # 停止worker
+                self.thread.wait()  # 等待线程结束
+                self.worker.deleteLater()  # 删除worker对象
+                self.thread.deleteLater()  # 删除线程对象
+                self._started_flag = False
+                self.is_paused = False  # 重置暂停标志
+                self.i = 0  # 循环计数器清零
+                self.unfreeze_config()
+                MessageBox("警告", "转码任务已暂停！软件即将退出，请重新启动！", parent=self).exec()

@@ -15,12 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QFrame, QGridLayout,
-    QHBoxLayout, QLabel, QLayout, QListWidgetItem,
-    QPlainTextEdit, QPushButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
+    QLabel, QLayout, QPushButton, QSizePolicy,
+    QSpacerItem, QVBoxLayout, QWidget)
 
-from qfluentwidgets import (ListWidget, PlainTextEdit, PushButton, ScrollArea)
+from qfluentwidgets import (PushButton, ScrollArea)
 
 class Ui_AboutInterface(object):
     def setupUi(self, AboutInterface):
@@ -38,7 +37,7 @@ class Ui_AboutInterface(object):
         self.AboutIFscrollArea.setWidgetResizable(True)
         self.AboutIFfacescrollAreaWidgetContents = QWidget()
         self.AboutIFfacescrollAreaWidgetContents.setObjectName(u"AboutIFfacescrollAreaWidgetContents")
-        self.AboutIFfacescrollAreaWidgetContents.setGeometry(QRect(0, 0, 1067, 731))
+        self.AboutIFfacescrollAreaWidgetContents.setGeometry(QRect(0, 0, 1050, 734))
         self.verticalLayout_3 = QVBoxLayout(self.AboutIFfacescrollAreaWidgetContents)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.AboutIFbox01 = QHBoxLayout()
@@ -105,31 +104,22 @@ class Ui_AboutInterface(object):
         sizePolicy2.setHeightForWidth(self.AboutIFbox02.sizePolicy().hasHeightForWidth())
         self.AboutIFbox02.setSizePolicy(sizePolicy2)
         self.AboutIFbox02.setMinimumSize(QSize(480, 145))
-        self.AboutIFbox02.setMaximumSize(QSize(16777215, 240))
+        self.AboutIFbox02.setMaximumSize(QSize(16777215, 480))
         self.AboutIFbox02.setFrameShape(QFrame.Shape.StyledPanel)
         self.AboutIFbox02.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout = QGridLayout(self.AboutIFbox02)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.AboutIFinputfile = PushButton(self.AboutIFbox02)
-        self.AboutIFinputfile.setObjectName(u"AboutIFinputfile")
+        self.AboutIFinputclear = PushButton(self.AboutIFbox02)
+        self.AboutIFinputclear.setObjectName(u"AboutIFinputclear")
         sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
         sizePolicy3.setHorizontalStretch(0)
         sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.AboutIFinputfile.sizePolicy().hasHeightForWidth())
-        self.AboutIFinputfile.setSizePolicy(sizePolicy3)
-        self.AboutIFinputfile.setMinimumSize(QSize(0, 60))
+        sizePolicy3.setHeightForWidth(self.AboutIFinputclear.sizePolicy().hasHeightForWidth())
+        self.AboutIFinputclear.setSizePolicy(sizePolicy3)
+        self.AboutIFinputclear.setMinimumSize(QSize(0, 120))
         font2 = QFont()
         font2.setPointSize(12)
         font2.setBold(True)
-        self.AboutIFinputfile.setFont(font2)
-
-        self.gridLayout.addWidget(self.AboutIFinputfile, 0, 0, 1, 1)
-
-        self.AboutIFinputclear = PushButton(self.AboutIFbox02)
-        self.AboutIFinputclear.setObjectName(u"AboutIFinputclear")
-        sizePolicy3.setHeightForWidth(self.AboutIFinputclear.sizePolicy().hasHeightForWidth())
-        self.AboutIFinputclear.setSizePolicy(sizePolicy3)
-        self.AboutIFinputclear.setMinimumSize(QSize(0, 60))
         self.AboutIFinputclear.setFont(font2)
 
         self.gridLayout.addWidget(self.AboutIFinputclear, 0, 1, 1, 1)
@@ -138,51 +128,100 @@ class Ui_AboutInterface(object):
         self.AboutIFoutputfolder.setObjectName(u"AboutIFoutputfolder")
         sizePolicy3.setHeightForWidth(self.AboutIFoutputfolder.sizePolicy().hasHeightForWidth())
         self.AboutIFoutputfolder.setSizePolicy(sizePolicy3)
-        self.AboutIFoutputfolder.setMinimumSize(QSize(0, 60))
+        self.AboutIFoutputfolder.setMinimumSize(QSize(0, 120))
         self.AboutIFoutputfolder.setFont(font2)
 
         self.gridLayout.addWidget(self.AboutIFoutputfolder, 0, 2, 1, 1)
 
-        self.AboutIFinputlist = ListWidget(self.AboutIFbox02)
-        self.AboutIFinputlist.setObjectName(u"AboutIFinputlist")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.AboutIFinputlist.sizePolicy().hasHeightForWidth())
-        self.AboutIFinputlist.setSizePolicy(sizePolicy4)
-        self.AboutIFinputlist.setMinimumSize(QSize(0, 120))
-        self.AboutIFinputlist.setMaximumSize(QSize(16777215, 200))
-        self.AboutIFinputlist.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.AboutIFinputlist.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        self.AboutIFinputlist.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustIgnored)
-        self.AboutIFinputlist.setDragEnabled(False)
+        self.AboutIFinputfile = PushButton(self.AboutIFbox02)
+        self.AboutIFinputfile.setObjectName(u"AboutIFinputfile")
+        sizePolicy3.setHeightForWidth(self.AboutIFinputfile.sizePolicy().hasHeightForWidth())
+        self.AboutIFinputfile.setSizePolicy(sizePolicy3)
+        self.AboutIFinputfile.setMinimumSize(QSize(0, 120))
+        self.AboutIFinputfile.setFont(font2)
 
-        self.gridLayout.addWidget(self.AboutIFinputlist, 1, 0, 1, 3)
+        self.gridLayout.addWidget(self.AboutIFinputfile, 0, 0, 1, 1)
+
+        self.AboutIFlabel = QLabel(self.AboutIFbox02)
+        self.AboutIFlabel.setObjectName(u"AboutIFlabel")
+        sizePolicy2.setHeightForWidth(self.AboutIFlabel.sizePolicy().hasHeightForWidth())
+        self.AboutIFlabel.setSizePolicy(sizePolicy2)
+        self.AboutIFlabel.setMinimumSize(QSize(720, 120))
+        font3 = QFont()
+        font3.setPointSize(12)
+        self.AboutIFlabel.setFont(font3)
+        self.AboutIFlabel.setFrameShadow(QFrame.Shadow.Plain)
+        self.AboutIFlabel.setLineWidth(1)
+        self.AboutIFlabel.setTextFormat(Qt.TextFormat.AutoText)
+        self.AboutIFlabel.setScaledContents(False)
+        self.AboutIFlabel.setAlignment(Qt.AlignmentFlag.AlignJustify|Qt.AlignmentFlag.AlignTop)
+        self.AboutIFlabel.setWordWrap(True)
+        self.AboutIFlabel.setMargin(24)
+        self.AboutIFlabel.setIndent(-1)
+        self.AboutIFlabel.setOpenExternalLinks(False)
+
+        self.gridLayout.addWidget(self.AboutIFlabel, 1, 0, 1, 3)
 
 
         self.verticalLayout_3.addWidget(self.AboutIFbox02)
 
-        self.AboutIFbox03 = QHBoxLayout()
-        self.AboutIFbox03.setObjectName(u"AboutIFbox03")
+        self.AboutIFlabel_2 = QLabel(self.AboutIFfacescrollAreaWidgetContents)
+        self.AboutIFlabel_2.setObjectName(u"AboutIFlabel_2")
+        font4 = QFont()
+        font4.setPointSize(18)
+        font4.setBold(True)
+        self.AboutIFlabel_2.setFont(font4)
 
-        self.verticalLayout_3.addLayout(self.AboutIFbox03)
+        self.verticalLayout_3.addWidget(self.AboutIFlabel_2)
 
-        self.AboutIFbox04 = QHBoxLayout()
+        self.AboutIFbox04 = QFrame(self.AboutIFfacescrollAreaWidgetContents)
         self.AboutIFbox04.setObjectName(u"AboutIFbox04")
+        self.AboutIFbox04.setFrameShape(QFrame.Shape.StyledPanel)
+        self.AboutIFbox04.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout = QHBoxLayout(self.AboutIFbox04)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.AboutIFrefer1 = QPushButton(self.AboutIFbox04)
+        self.AboutIFrefer1.setObjectName(u"AboutIFrefer1")
+        sizePolicy3.setHeightForWidth(self.AboutIFrefer1.sizePolicy().hasHeightForWidth())
+        self.AboutIFrefer1.setSizePolicy(sizePolicy3)
+        self.AboutIFrefer1.setMinimumSize(QSize(0, 60))
+        self.AboutIFrefer1.setFont(font2)
 
-        self.verticalLayout_3.addLayout(self.AboutIFbox04)
+        self.horizontalLayout.addWidget(self.AboutIFrefer1)
 
-        self.AboutIFconsole = PlainTextEdit(self.AboutIFfacescrollAreaWidgetContents)
-        self.AboutIFconsole.setObjectName(u"AboutIFconsole")
-        sizePolicy2.setHeightForWidth(self.AboutIFconsole.sizePolicy().hasHeightForWidth())
-        self.AboutIFconsole.setSizePolicy(sizePolicy2)
-        self.AboutIFconsole.setMinimumSize(QSize(640, 160))
-        self.AboutIFconsole.setMaximumSize(QSize(6400, 300))
-        self.AboutIFconsole.setUndoRedoEnabled(False)
-        self.AboutIFconsole.setLineWrapMode(QPlainTextEdit.LineWrapMode.WidgetWidth)
-        self.AboutIFconsole.setReadOnly(True)
+        self.AboutIFrefer2 = QPushButton(self.AboutIFbox04)
+        self.AboutIFrefer2.setObjectName(u"AboutIFrefer2")
+        sizePolicy3.setHeightForWidth(self.AboutIFrefer2.sizePolicy().hasHeightForWidth())
+        self.AboutIFrefer2.setSizePolicy(sizePolicy3)
+        self.AboutIFrefer2.setMinimumSize(QSize(0, 60))
+        self.AboutIFrefer2.setFont(font2)
 
-        self.verticalLayout_3.addWidget(self.AboutIFconsole)
+        self.horizontalLayout.addWidget(self.AboutIFrefer2)
+
+        self.AboutIFrefer3 = QPushButton(self.AboutIFbox04)
+        self.AboutIFrefer3.setObjectName(u"AboutIFrefer3")
+        sizePolicy3.setHeightForWidth(self.AboutIFrefer3.sizePolicy().hasHeightForWidth())
+        self.AboutIFrefer3.setSizePolicy(sizePolicy3)
+        self.AboutIFrefer3.setMinimumSize(QSize(0, 60))
+        self.AboutIFrefer3.setFont(font2)
+
+        self.horizontalLayout.addWidget(self.AboutIFrefer3)
+
+
+        self.verticalLayout_3.addWidget(self.AboutIFbox04)
+
+        self.AboutIFlabel_3 = QLabel(self.AboutIFfacescrollAreaWidgetContents)
+        self.AboutIFlabel_3.setObjectName(u"AboutIFlabel_3")
+        self.AboutIFlabel_3.setFont(font4)
+
+        self.verticalLayout_3.addWidget(self.AboutIFlabel_3)
+
+        self.label = QLabel(self.AboutIFfacescrollAreaWidgetContents)
+        self.label.setObjectName(u"label")
+        self.label.setTextFormat(Qt.TextFormat.MarkdownText)
+        self.label.setMargin(12)
+
+        self.verticalLayout_3.addWidget(self.label)
 
         self.AboutIFscrollArea.setWidget(self.AboutIFfacescrollAreaWidgetContents)
 
@@ -199,8 +238,27 @@ class Ui_AboutInterface(object):
         self.AboutIFTitle1.setText(QCoreApplication.translate("AboutInterface", u"\u5173\u4e8e", None))
         self.AboutIFTitle2.setText(QCoreApplication.translate("AboutInterface", u"\u4f5c\u8005\uff1awish_2333", None))
         self.Aboutlabel.setText(QCoreApplication.translate("AboutInterface", u"\u4e00\u4e2a\u89c6\u9891\u6279\u5904\u7406\u7684\u5de5\u5177\u7bb1", None))
-        self.AboutIFinputfile.setText(QCoreApplication.translate("AboutInterface", u"Github\uff1awish2333", None))
         self.AboutIFinputclear.setText(QCoreApplication.translate("AboutInterface", u"Bilibili\uff1awish_2333", None))
         self.AboutIFoutputfolder.setText(QCoreApplication.translate("AboutInterface", u"\u4e2a\u4eba\u535a\u5ba2\uff1aWish's Blog", None))
+        self.AboutIFinputfile.setText(QCoreApplication.translate("AboutInterface", u"Github\uff1awish2333", None))
+        self.AboutIFlabel.setText(QCoreApplication.translate("AboutInterface", u"VideoExtractAndConcat\n"
+"\n"
+"\u672c\u9879\u76ee\u65e8\u5728\u5f00\u53d1\u4e00\u4e2a\u7528\u6237\u53cb\u597d\u7684\u56fe\u5f62\u754c\u9762\u5e94\u7528\u7a0b\u5e8f\uff0c\u7528\u4e8e\u89c6\u9891\u7247\u5934\u548c\u7247\u5c3e\u7684\u5feb\u901f\u5207\u5272\u4e0e\u5408\u5e76\u529f\u80fd\u3002\u901a\u8fc7\u96c6\u6210QtDesigner\u8bbe\u8ba1\u7684\u754c\u9762\u4e0ePython\u7f16\u7a0b\u8bed\u8a00\uff0c\u7ed3\u5408\u5f3a\u5927\u7684ffmpeg\u5de5\u5177\uff0c\u7528\u6237\u80fd\u591f\u8f7b\u677e\u6307\u5b9a\u89c6\u9891\u6587\u4ef6\u3001\u8bbe\u7f6e\u5207\u5272\u65f6\u95f4\u70b9\uff0c\u5b8c\u6210\u89c6\u9891\u5904\u7406\u4efb\u52a1\u3002\u9879\u76ee\u6700\u7ec8\u76ee\u6807\u662f\u63d0\u9ad8\u89c6\u9891\u7f16\u8f91\u6548\u7387\uff0c\u5c24\u5176\u9002\u5408\u9700\u8981\u6279\u91cf\u5904\u7406\u89c6\u9891\u7684\u7528\u6237\u3002", None))
+        self.AboutIFlabel_2.setText(QCoreApplication.translate("AboutInterface", u"\u53c2\u8003\u9879\u76ee", None))
+        self.AboutIFrefer1.setText(QCoreApplication.translate("AboutInterface", u"API: FFmpeg", None))
+        self.AboutIFrefer2.setText(QCoreApplication.translate("AboutInterface", u"UI: Fluent-Widget", None))
+        self.AboutIFrefer3.setText(QCoreApplication.translate("AboutInterface", u"AND SO ON", None))
+        self.AboutIFlabel_3.setText(QCoreApplication.translate("AboutInterface", u"\u66f4\u65b0\u65e5\u5fd7", None))
+        self.label.setText(QCoreApplication.translate("AboutInterface", u"## Update20240519-1921\n"
+"\n"
+"**version-pre4.0**\n"
+"\n"
+"\u89c6\u9891\u6279\u5904\u7406\u9762\u677f\u5b8c\u6210\u4e86\u4e2d\u65ad\u6309\u94ae\u53ca\u903b\u8f91\u5b9e\u73b0\uff08\u901a\u8fc7\u4e2d\u65ad\u6807\u5fd7\u548c\u56de\u8c03\u51fd\u6570\u5411api\u6a21\u5757\u7684\u4f20\u8f93\u4e0e\u63a5\u53d7\uff09\uff0capi\u6a21\u5757\u901a\u8fc7\u5b88\u536b\u7ebf\u7a0b\u5b9e\u73b0\u4e2d\u65ad\u64cd\u4f5c\u5e76\u8c03\u7528\u56de\u8c03\u51fd\u6570\u4f20\u8f93\u4e2d\u65ad\u5b8c\u6210\u6807\u5fd7\u3002\n"
+"\n"
+"**version-pre4.1**\n"
+"\n"
+"\u5b8c\u6210\u4e86\u89c6\u9891\u9762\u677f\uff08\u5355\u6587\u4ef6\uff09\u7684\u97f3\u89c6\u9891\u53ca\u5b57\u5e55\u6df7\u6d41\u5408\u6210\u3002\n"
+"\n"
+"\u4fee\u590d\u4e86\u4e2d\u65ad\u540e\u5b88\u536b\u7ebf\u7a0bt\u6ca1\u6709\u88ab\u6b63\u786e\u5173\u95ed\u7684\u9519\u8bef\u3002", None))
     # retranslateUi
 

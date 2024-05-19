@@ -32,6 +32,8 @@ class Worker(QObject):
             self.audio_encode(*self.task_args)
         elif self.task_type == 'video_encode':
             self.video_encode(*self.task_args)
+        elif self.task_type == 'avsmix_encode':
+            self.avsmix_encode(*self.task_args)
         self.finished.emit()  # 任务完成，发出信号
 
     # 在这里可以添加更多任务类型的判断和调用
@@ -44,6 +46,9 @@ class Worker(QObject):
     def video_encode(self, input_file, output_file, encoder, overwrite='-y'):
         ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
         ffmpeg_instance.video_encode(input_file, output_file, encoder, overwrite)
+    def avsmix_encode(self, input_file, output_file, audio, subtitle, encoder, overwrite='-y'):
+        ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
+        ffmpeg_instance.avsmix_encode(input_file, output_file, audio, subtitle, encoder, overwrite)
         
 # 继承自QThread的子类，用于后台执行任务的线程类
 class WorkerThread(QThread):
@@ -318,18 +323,38 @@ class VcodecInterface(QWidget, Ui_VcodecInterfacee):
                         self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
                         self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
                         self.thread.start()  # 开始线程
-                else:
-                    # 有音频或字幕，功能省缺
-                    ########
-                    # QMessageBox.information(self, "提示", "音频或字幕功能暂未实现，请等待更新！", QMessageBox.Yes)
-                    w = MessageBox("提示", "音频或字幕功能暂未实现，请等待更新！", parent=self)
-                    if w.exec():
-                        logging.info('确认,关闭提示窗口')
+                elif not self.lineEdit3.text() == '' or not self.lineEdit4.text() == '':
+                    # 有音频或字幕
+                    if self.timeEdit.text() == '0:00:00:000' and self.timeEdit_2.text() == '0:00:00:000':
+                        self.console.appendPlainText("执行音视频合成任务，请稍等...")
+                        # 音视频合成任务
+                        if self.lineEdit3.text() != '':
+                            audio_input_file_path = self.lineEdit3.text()
+                            audio = f'-i "{audio_input_file_path}"'
+                        else:
+                            audio = ''
+                        if self.lineEdit4.text() != '':
+                            subtitle_input_file_path = self.lineEdit4.text().replace(':', r'\:')  # 注意转义
+                            if os.path.splitext(subtitle_input_file_path)[1] == '.srt':
+                                subtitle_format = 'subtitles'
+                            elif os.path.splitext(subtitle_input_file_path)[1] == '.ass':
+                                subtitle_format = 'ass'
+                            else:
+                                logging.error("字幕格式错误，请检查！")
+                            subtitle = f'-vf "{subtitle_format}=\'{subtitle_input_file_path}\'"'  # 注意转义
+                        else:
+                            subtitle = ''
+                        self.worker = Worker('avsmix_encode', ffpath.ffmpeg_path, ffpath.ffprobe_path,self.lineEdit1.text(), self.lineEdit2.text(), audio, subtitle, self.plainTextEdit.toPlainText())  # 开启子进程
+                        self.thread = WorkerThread(self.worker)
+                        self.thread.started.connect(lambda: self.console.appendPlainText("开始音视频合成"))  # 线程开始时显示提示信息
+                        self.thread.finished.connect(lambda: self.console.appendPlainText("完成音视频合成"))  # 线程结束时显示提示信息
+                        self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
+                        self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
+                        self.thread.start()  # 开始线程
                     else:
-                        logging.info('取消,关闭提示窗口')
-                    self.lineEdit3.setText('')
-                    self.lineEdit4.setText('')
-                    ########
+                        MessageBox("警告", "切割功能暂不支持音视频合成，分别执行！", parent=self).exec()
+                        self.timeEdit.setText('0:00:00:000')
+                        self.timeEdit_2.setText('0:00:00:000')
             else:
                 # QMessageBox.warning(self, "警告", "输入文件不存在！", QMessageBox.Yes)
                 w = MessageBox("提示", "输入文件不存在！", parent=self)

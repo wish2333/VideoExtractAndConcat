@@ -1,5 +1,6 @@
 import sys
 import logging
+import os
 # 第三方库
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
@@ -16,6 +17,8 @@ from modules.config import init_ffpath
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 # 创建一个文件处理器并设置级别、文件名和编码
+if os.path.exists(r'log') == False:
+    os.mkdir(r'log')
 file_handler = logging.FileHandler(r'log/log.txt', mode='w', encoding='utf-8')
 file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
@@ -35,7 +38,7 @@ class mainWindow(FluentWindow):
         
     def init_windows(self):
         self.resize(1280, 720)  # 设置窗口大小
-        self.navigationInterface.setExpandWidth(200)  # 设置导航栏宽度
+        self.navigationInterface.setExpandWidth(250)  # 设置导航栏宽度
         self.setWindowTitle("VideoExtractAndConcat")  # 设置窗口标题
 
     def init_widget(self):

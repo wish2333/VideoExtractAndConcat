@@ -4,7 +4,8 @@
 import subprocess
 import os
 import logging
-# import time
+import time
+import threading
 
 from modules.config import ffpath
 
@@ -13,38 +14,74 @@ class FFmpeg:
     # 初始化函数，用于初始化实例的ffmpeg_path属性
     def __init__(self, 
         ffmpeg_path=ffpath.ffmpeg_path,
-        ffprobe_path=ffpath.ffprobe_path
+        ffprobe_path=ffpath.ffprobe_path,
+        interrupt_flag=False,  # 中断标志
+        callback=None,  # 回调函数
     ):
         self.ffmpeg_path = ffmpeg_path
         self.ffprobe_path = ffprobe_path
+        self.interrupt_flag = interrupt_flag
+        self.callback = callback
+
+    def update_interrupt_flag(self, flag=True):
+        self.interrupt_flag = flag
+    def check_interrupt_flag(self):
+        while not self.interrupt_flag:
+            # logging.info("ffmpegapi守卫线程运行中")
+            time.sleep(1)
+        logging.info("ffmpegapi检测到中断请求")
+        self.interrupt_run()
+    def interrupt_run(self):
+        if self.interrupt_flag:
+            # 如果收到中断信号，则终止FFmpeg进程
+            logging.info("尝试终止FFmpeg进程")
+            self.p.terminate()
+            self.p.wait(timeout=5)
+            if self.p.poll() is None:
+                self.p.kill()
+            if callable(self.callback):
+                self.callback()
+            self.interrupt_flag = False
+            logging.info("FFmpeg进程强制终止")
+        logging.info("ffmpegapi中断请求已处理")
+        
 
     # 定义run方法来执行FFmpeg命令
     def run(self, 
         cmd
     ):
+        t = None  # 守卫线程预留在try之外
         try:
             cmd = [self.ffmpeg_path] + cmd
             cmd_str = ' '.join(cmd)
             logging.info(f"尝试执行：{cmd_str}")
             # 创建线程运行FFmpeg命令
-            p = subprocess.Popen(
+            self.p = subprocess.Popen(
                 cmd_str, 
                 stdout=subprocess.PIPE, 
                 stderr=subprocess.STDOUT
             )
+            # 创建线程检测中断信号
+            t = threading.Thread(target=self.check_interrupt_flag)
+            t.daemon = True
+            t.start()
+            if t.is_alive():
+                logging.info('启动守卫线程成功')
+            else:
+                logging.error('启动守卫线程失败')
             # 实时输出FFmpeg命令的执行信息
             while True:
-                line = p.stdout.readline().decode('utf-8')
+                line = self.p.stdout.readline().decode('utf-8')
                 if not line:
                     # 如果没有更多输出，检查进程是否已经结束
-                    if p.poll() is not None:
+                    if self.p.poll() is not None:
                         break
                     else:
                         continue
                 logging.info(line.strip())  # 打印输出信息
             # 如果出错，获取错误信息
-            out, err = p.communicate()
-            if p.returncode != 0:
+            out, err = self.p.communicate()
+            if self.p.returncode != 0:
                 logging.info(f"命令执行失败，错误信息：{err.decode('utf-8')}")
                 raise Exception(err.decode('utf-8'))
         except FileNotFoundError as fnf_error:
@@ -56,6 +93,13 @@ class FFmpeg:
         except Exception as e:
             logging.error(f"执行FFmpeg命令失败：{e}")
             raise e
+        finally:
+            logging.info("FFmpeg命令执行完成")
+            if t and t.is_alive():
+                self.interrupt_flag = True  # 设置中断标志
+                t.join()
+                self.interrupt_flag = False  # 重置中断标志
+                logging.info("守卫线程退出")
     
     # 输出ffmpeg的版本信息
     def version(self):
@@ -335,3 +379,25 @@ class FFmpeg:
         self.run(cmd)
         file = os.path.basename(input_file)
         logging.info(file + '视频加速完成')
+
+    # 音视频字幕混合
+    def avsmix_encode(self, 
+        input_file, 
+        output_file, 
+        audio,
+        subtitle,
+        encoder = r'-vcodec libx264 -preset medium -crf 23 -acodec aac -b:a 128k', 
+        overwrite='-y'):
+        cmd = [
+            '-hide_banner',
+            overwrite, 
+            '-i', 
+            f'"{input_file}"', 
+            audio,
+            subtitle, 
+            encoder,
+            f'"{output_file}"'
+        ]
+        self.run(cmd)
+        file = os.path.basename(input_file)
+        logging.info(file + '视频字幕混合完成')

@@ -37,7 +37,7 @@ class mainWindow(FluentWindow):
 
 if __name__ == '__main__':
     # enable dpi scale
-	# 这一项好像有问题QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
+    # 这一项好像有问题QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     app = QApplication(sys.argv)
     window = mainWindow()
     window.show()
@@ -67,7 +67,7 @@ from from venco_Interface import VencoInterface
 def __init__(self):
     # ....
     # 添加子界面
-	self.vencoInterface = VencoInterface(self)
+    self.vencoInterface = VencoInterface(self)
     self.addSubInterface(self.vencoInterface, FluentIcon.RINGER, "Venco Interface")
 ```
 
@@ -104,8 +104,8 @@ class TextEditClass():
 class VencoInterface(QWidget, Ui_Form):
     # ......
     # encoder
-	custom_encoder = TextEditClass.change_custom_encoder(TextEditClass)
-	self.plainTextEdit.setPlainText(custom_encoder) 
+    custom_encoder = TextEditClass.change_custom_encoder(TextEditClass)
+    self.plainTextEdit.setPlainText(custom_encoder) 
 ```
 
 #### 绑定各项编码设置到自定义编码plainTextEdit中显示
@@ -113,14 +113,14 @@ class VencoInterface(QWidget, Ui_Form):
 ### 开始执行
 
 - 如果有输入、输出→检查输入是否合法
-  - 合法→检查是否切割
-    - 简单转码流程
-    - 切割流程
-  - 不合法
-    - 弹窗警告
+   - 合法→检查是否切割
+      - 简单转码流程
+      - 切割流程
+   - 不合法
+      - 弹窗警告
 - 如果没有输入、输出→检查是否有音频
-  - 有音频→音频转码流程
-  - 无音频→无事发生
+   - 有音频→音频转码流程
+   - 无音频→无事发生
 - 功能暂未完善（如字幕封装、音频替换封装等）
 
 # UpdateLog20240510
@@ -151,13 +151,13 @@ while True:
             break
             else:
                 continue
-	logging.info(line.strip())  # 打印输出信息
+    logging.info(line.strip())  # 打印输出信息
 ```
 
 ### main.py
 
 1. 多线程设置
-
+   
    ```python
    # 引入并创建多线程函数
    from PySide6.QtCore import QThread, Signal, QObject
@@ -184,7 +184,7 @@ while True:
        def merge_video(self, input_folder, file1, file2, output_folder, encoder, overwrite):
            ffmpeg_instance = FFmpeg(self.ffmpeg_path)  # 实例化FFmpegApi
            ffmpeg_instance.merge_video(input_folder, file1, file2, output_folder, encoder, overwrite)
-           
+   
    # 继承自QThread的子类，用于后台执行任务的线程类
    class WorkerThread(QThread):
        def __init__(self, worker):
@@ -207,7 +207,7 @@ while True:
    ```
 
 2. logging记录日志信息
-
+   
    ```python
    import logging
    # 初始化logger
@@ -227,7 +227,7 @@ while True:
    ```
 
 3. 调整主题
-
+   
    ```python
    from qt_material import apply_stylesheet
    import sys
@@ -242,11 +242,11 @@ while True:
    ```
 
 4. 检查ffmpeg修改后的情况
-
+   
    ```python
    # 判断ffmpeg文件是否存在
    if not (os.path.isfile(ffpath.ffmpeg_path) and os.path.isfile(ffpath.ffprobe_path)):
-   	self.textEdit.append("ffmpeg路径或ffprobe路径错误，请检查！")
+       self.textEdit.append("ffmpeg路径或ffprobe路径错误，请检查！")
    ```
 
 # UpdateLog20240509
@@ -353,8 +353,8 @@ args = cmd.split(' ')
 
 - [x] 对version函数的修改
 - [x] 对extract函数的修改
-  - [x] async def get_duration
-  - [x] asyncio.run(run_async())
+   - [x] async def get_duration
+   - [x] asyncio.run(run_async())
 - [x] 对merge函数的修改
 - [x] 处理overwrite事件（默认覆盖-y或不覆盖-n）
 
@@ -363,12 +363,9 @@ args = cmd.split(' ')
 - [ ] overwrite选项UI实现
 - [ ] 双文件合并选项核心逻辑实现、UI实现
 - [ ] UI重构，为后续功能预留空间
-  - [ ] 源代码链接
-  - [ ] Browse同步textEdit
-  - [ ] 每个功能一栏
+   - [ ] 源代码链接
+   - [ ] Browse同步textEdit
+   - [ ] 每个功能一栏
 - [ ] 后续功能预想
-  - [ ] 单文件、多文件转码
-  - [ ] 编码格式选项实现
-
-
-
+   - [ ] 单文件、多文件转码
+   - [ ] 编码格式选项实现

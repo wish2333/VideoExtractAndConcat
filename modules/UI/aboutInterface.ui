@@ -42,8 +42,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1067</width>
-        <height>731</height>
+        <width>1050</width>
+        <height>734</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -165,7 +165,7 @@
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>240</height>
+           <height>480</height>
           </size>
          </property>
          <property name="frameShape">
@@ -175,31 +175,6 @@
           <enum>QFrame::Shadow::Raised</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="PushButton" name="AboutIFinputfile">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>60</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>12</pointsize>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Github：wish2333</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <widget class="PushButton" name="AboutIFinputclear">
             <property name="sizePolicy">
@@ -211,7 +186,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>60</height>
+              <height>120</height>
              </size>
             </property>
             <property name="font">
@@ -236,7 +211,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>60</height>
+              <height>120</height>
              </size>
             </property>
             <property name="font">
@@ -250,10 +225,10 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="3">
-           <widget class="ListWidget" name="AboutIFinputlist">
+          <item row="0" column="0">
+           <widget class="PushButton" name="AboutIFinputfile">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -264,22 +239,66 @@
               <height>120</height>
              </size>
             </property>
-            <property name="maximumSize">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Github：wish2333</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="3">
+           <widget class="QLabel" name="AboutIFlabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
              <size>
-              <width>16777215</width>
-              <height>200</height>
+              <width>720</width>
+              <height>120</height>
              </size>
             </property>
-            <property name="verticalScrollBarPolicy">
-             <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
             </property>
-            <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
+            <property name="frameShadow">
+             <enum>QFrame::Shadow::Plain</enum>
             </property>
-            <property name="sizeAdjustPolicy">
-             <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustIgnored</enum>
+            <property name="lineWidth">
+             <number>1</number>
             </property>
-            <property name="dragEnabled">
+            <property name="text">
+             <string>VideoExtractAndConcat
+
+本项目旨在开发一个用户友好的图形界面应用程序，用于视频片头和片尾的快速切割与合并功能。通过集成QtDesigner设计的界面与Python编程语言，结合强大的ffmpeg工具，用户能够轻松指定视频文件、设置切割时间点，完成视频处理任务。项目最终目标是提高视频编辑效率，尤其适合需要批量处理视频的用户。</string>
+            </property>
+            <property name="textFormat">
+             <enum>Qt::TextFormat::AutoText</enum>
+            </property>
+            <property name="scaledContents">
+             <bool>false</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignmentFlag::AlignJustify|Qt::AlignmentFlag::AlignTop</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+            <property name="margin">
+             <number>24</number>
+            </property>
+            <property name="indent">
+             <number>-1</number>
+            </property>
+            <property name="openExternalLinks">
              <bool>false</bool>
             </property>
            </widget>
@@ -288,39 +307,138 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="AboutIFbox03"/>
+        <widget class="QLabel" name="AboutIFlabel_2">
+         <property name="font">
+          <font>
+           <pointsize>18</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>参考项目</string>
+         </property>
+        </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="AboutIFbox04"/>
+        <widget class="QFrame" name="AboutIFbox04">
+         <property name="frameShape">
+          <enum>QFrame::Shape::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Shadow::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QPushButton" name="AboutIFrefer1">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>60</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>API: FFmpeg</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="AboutIFrefer2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>60</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>UI: Fluent-Widget</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="AboutIFrefer3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>60</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>AND SO ON</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
-        <widget class="PlainTextEdit" name="AboutIFconsole">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QLabel" name="AboutIFlabel_3">
+         <property name="font">
+          <font>
+           <pointsize>18</pointsize>
+           <bold>true</bold>
+          </font>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>640</width>
-           <height>160</height>
-          </size>
+         <property name="text">
+          <string>更新日志</string>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>6400</width>
-           <height>300</height>
-          </size>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>## Update20240519-1921
+
+**version-pre4.0**
+
+视频批处理面板完成了中断按钮及逻辑实现（通过中断标志和回调函数向api模块的传输与接受），api模块通过守卫线程实现中断操作并调用回调函数传输中断完成标志。
+
+**version-pre4.1**
+
+完成了视频面板（单文件）的音视频及字幕混流合成。
+
+修复了中断后守卫线程t没有被正确关闭的错误。</string>
          </property>
-         <property name="undoRedoEnabled">
-          <bool>false</bool>
+         <property name="textFormat">
+          <enum>Qt::TextFormat::MarkdownText</enum>
          </property>
-         <property name="lineWrapMode">
-          <enum>QPlainTextEdit::LineWrapMode::WidgetWidth</enum>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
+         <property name="margin">
+          <number>12</number>
          </property>
         </widget>
        </item>
@@ -332,11 +450,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PlainTextEdit</class>
-   <extends>QPlainTextEdit</extends>
-   <header location="global">qfluentwidgets</header>
-  </customwidget>
-  <customwidget>
    <class>PushButton</class>
    <extends>QPushButton</extends>
    <header location="global">qfluentwidgets</header>
@@ -346,11 +459,6 @@
    <extends>QScrollArea</extends>
    <header location="global">qfluentwidgets</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ListWidget</class>
-   <extends>QListWidget</extends>
-   <header location="global">qfluentwidgets</header>
   </customwidget>
  </customwidgets>
  <resources/>
