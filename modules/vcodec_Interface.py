@@ -1,4 +1,4 @@
-import logging
+from modules.logger_config import logger
 import os
 
 from PySide6.QtCore import Qt, QThread, Signal, QObject
@@ -13,8 +13,8 @@ from modules.Ui_vcodecInterfacee import Ui_VcodecInterfacee
 
 
 # 打印初始化ffmpeg路径为：
-logging.info(f"初始化ffmpeg路径为：{ffpath.ffmpeg_path}")
-logging.info(f"初始化ffprobe路径为：{ffpath.ffprobe_path}")
+# logger.info(f"初始化ffmpeg路径为：{ffpath.ffmpeg_path}")
+# logger.info(f"初始化ffprobe路径为：{ffpath.ffprobe_path}")
 
 # 继承自QObject的子类，用于执行后台任务的子类
 class Worker(QObject):
@@ -99,7 +99,7 @@ class VcodecInterface(QWidget, Ui_VcodecInterfacee):
         self.comboBox_5.setEnabled(False)  # 禁止修改profile
     # Init_print
     def init_print(self):
-        logging.info("VideoCodecInterface模块初始化完成！")
+        logger.debug("VideoCodecInterface is initialized！")
         # Welcome message
         self.console.appendPlainText("欢迎使用FFmpeg-python视频处理工具！")
         # encoder
@@ -108,11 +108,11 @@ class VcodecInterface(QWidget, Ui_VcodecInterfacee):
         # 判断ffmpeg文件是否存在
         if not (os.path.isfile(ffpath.ffmpeg_path) and os.path.isfile(ffpath.ffprobe_path)):
             self.console.appendPlainText("ffmpeg路径或ffprobe路径错误，请检查！")
-            logging.error("ffmpeg or ffprobe error, please check the path!")
-        else:
-            self.console.appendPlainText(f"ffmpeg初始化：{ffpath.ffmpeg_path}")
-            self.console.appendPlainText(f"ffprobe初始化：{ffpath.ffprobe_path}")
-            logging.info(f"ffmpeg and ffprobe initialized successfully!")
+            logger.error("ffmpeg or ffprobe error, please check the path!")
+        # else:
+            # self.console.appendPlainText(f"ffmpeg初始化：{ffpath.ffmpeg_path}")
+            # self.console.appendPlainText(f"ffprobe初始化：{ffpath.ffprobe_path}")
+            # logger.info(f"ffmpeg and ffprobe initialized successfully!")
     # Bind Event
     def bind(self):
         # Bind Button Event 
@@ -158,9 +158,9 @@ class VcodecInterface(QWidget, Ui_VcodecInterfacee):
             # QMessageBox.information(self, "警告", "请先选择输入文件！", QMessageBox.Yes)
             w = MessageBox("警告", "请先选择输入文件！", parent=self)
             if w.exec():
-                logging.info('确认,关闭警告窗口')
+                logger.info('确认,关闭警告窗口')
             else:
-                logging.info('取消,关闭警告窗口')
+                logger.info('取消,关闭警告窗口')
 
     # open_file_3:audio
     def open_file_3(self):
@@ -178,9 +178,9 @@ class VcodecInterface(QWidget, Ui_VcodecInterfacee):
             # QMessageBox.information(self, "警告", "请先选择输入文件！", QMessageBox.Yes)
             w = MessageBox("警告", "请先选择输入文件！", parent=self)
             if w.exec():
-                logging.info('确认,关闭警告窗口')
+                logger.info('确认,关闭警告窗口')
             else:
-                logging.info('取消,关闭警告窗口')
+                logger.info('取消,关闭警告窗口')
 
 
 
@@ -340,7 +340,7 @@ class VcodecInterface(QWidget, Ui_VcodecInterfacee):
                             elif os.path.splitext(subtitle_input_file_path)[1] == '.ass':
                                 subtitle_format = 'ass'
                             else:
-                                logging.error("字幕格式错误，请检查！")
+                                logger.error("字幕格式错误，请检查！")
                             subtitle = f'-vf "{subtitle_format}=\'{subtitle_input_file_path}\'"'  # 注意转义
                         else:
                             subtitle = ''
@@ -359,9 +359,9 @@ class VcodecInterface(QWidget, Ui_VcodecInterfacee):
                 # QMessageBox.warning(self, "警告", "输入文件不存在！", QMessageBox.Yes)
                 w = MessageBox("提示", "输入文件不存在！", parent=self)
                 if w.exec():
-                    logging.info('确认,关闭提示窗口')
+                    logger.info('确认,关闭提示窗口')
                 else:
-                    logging.info('取消,关闭提示窗口')
+                    logger.info('取消,关闭提示窗口')
         # 如果输入输出不存在，音频存在，执行音频转码
         elif self.lineEdit1.text() == '' and self.lineEdit2.text() == '' and not self.lineEdit3.text() == '':
             self.custom_encoder = f'{self.acodec} {self.apreset} '  # 结尾要有空格
@@ -378,7 +378,7 @@ class VcodecInterface(QWidget, Ui_VcodecInterfacee):
                 self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
                 self.thread.start()  # 开始线程
             else:
-                logging.info('取消,关闭提示窗口')
+                logger.info('取消,关闭提示窗口')
             ######## 显示进度条 ########
             # 打开输出文件夹
             # 判断是否成功
@@ -388,6 +388,6 @@ class VcodecInterface(QWidget, Ui_VcodecInterfacee):
             # QMessageBox.warning(self, "警告", "请选择输出文件！", QMessageBox.Yes)
             w = MessageBox("警告", "请选择输出文件！", parent=self)
             if w.exec():
-                logging.info('确认,关闭警告窗口')
+                logger.info('确认,关闭警告窗口')
             else:
-                logging.info('取消,关闭警告窗口')
+                logger.info('取消,关闭警告窗口')

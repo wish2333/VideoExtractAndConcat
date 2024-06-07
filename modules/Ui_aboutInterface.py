@@ -25,7 +25,7 @@ class Ui_AboutInterface(object):
     def setupUi(self, AboutInterface):
         if not AboutInterface.objectName():
             AboutInterface.setObjectName(u"AboutInterface")
-        AboutInterface.resize(1085, 749)
+        AboutInterface.resize(1089, 757)
         AboutInterface.setMinimumSize(QSize(780, 0))
         self.verticalLayout = QVBoxLayout(AboutInterface)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -37,7 +37,7 @@ class Ui_AboutInterface(object):
         self.AboutIFscrollArea.setWidgetResizable(True)
         self.AboutIFfacescrollAreaWidgetContents = QWidget()
         self.AboutIFfacescrollAreaWidgetContents.setObjectName(u"AboutIFfacescrollAreaWidgetContents")
-        self.AboutIFfacescrollAreaWidgetContents.setGeometry(QRect(0, 0, 1050, 734))
+        self.AboutIFfacescrollAreaWidgetContents.setGeometry(QRect(0, 0, 1071, 739))
         self.verticalLayout_3 = QVBoxLayout(self.AboutIFfacescrollAreaWidgetContents)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.AboutIFbox01 = QHBoxLayout()
@@ -249,16 +249,9 @@ class Ui_AboutInterface(object):
         self.AboutIFrefer2.setText(QCoreApplication.translate("AboutInterface", u"UI: Fluent-Widget", None))
         self.AboutIFrefer3.setText(QCoreApplication.translate("AboutInterface", u"AND SO ON", None))
         self.AboutIFlabel_3.setText(QCoreApplication.translate("AboutInterface", u"\u66f4\u65b0\u65e5\u5fd7", None))
-        self.label.setText(QCoreApplication.translate("AboutInterface", u"## Update20240519-1921\n"
-"\n"
-"**version-pre4.0**\n"
-"\n"
-"\u89c6\u9891\u6279\u5904\u7406\u9762\u677f\u5b8c\u6210\u4e86\u4e2d\u65ad\u6309\u94ae\u53ca\u903b\u8f91\u5b9e\u73b0\uff08\u901a\u8fc7\u4e2d\u65ad\u6807\u5fd7\u548c\u56de\u8c03\u51fd\u6570\u5411api\u6a21\u5757\u7684\u4f20\u8f93\u4e0e\u63a5\u53d7\uff09\uff0capi\u6a21\u5757\u901a\u8fc7\u5b88\u536b\u7ebf\u7a0b\u5b9e\u73b0\u4e2d\u65ad\u64cd\u4f5c\u5e76\u8c03\u7528\u56de\u8c03\u51fd\u6570\u4f20\u8f93\u4e2d\u65ad\u5b8c\u6210\u6807\u5fd7\u3002\n"
-"\n"
-"**version-pre4.1**\n"
-"\n"
-"\u5b8c\u6210\u4e86\u89c6\u9891\u9762\u677f\uff08\u5355\u6587\u4ef6\uff09\u7684\u97f3\u89c6\u9891\u53ca\u5b57\u5e55\u6df7\u6d41\u5408\u6210\u3002\n"
-"\n"
-"\u4fee\u590d\u4e86\u4e2d\u65ad\u540e\u5b88\u536b\u7ebf\u7a0bt\u6ca1\u6709\u88ab\u6b63\u786e\u5173\u95ed\u7684\u9519\u8bef\u3002", None))
+        self.label.setText(QCoreApplication.translate("AboutInterface", u"## Update20240607\n"
+"**version-pre5.0**\n"
+"- \u65b0\u589e\u8f6c\u5c01\u88c5\u754c\u9762\n"
+"- \u65b0\u589e\u590d\u6742\u6ee4\u955c\u754c\u9762\uff08\u9884\u8bbe\u6a2a\u7ad6\u5c4f\u8f6c\u6362\uff09", None))
     # retranslateUi
 

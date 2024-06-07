@@ -1,6 +1,6 @@
 import os
 import configparser
-import logging
+from modules.logger_config import logger
 
 
 
@@ -21,9 +21,9 @@ def init_ffpath():
         configinit['PATHS']['ffplay_path'] = init_ffplay_path
         with open('.\\modules\\config.ini', 'w', encoding='UTF-8') as configfile:
             configinit.write(configfile)
-        logging.info('FFmpeg路径已初始化为：' + init_ffmpeg_path)
+        logger.info('FFmpeg路径已初始化为：' + init_ffmpeg_path)
     else:
-        logging.info('FFmpeg路径已读取为：' + configinit['PATHS']['ffmpeg_path'])
+        logger.info('FFmpeg路径已读取为：' + configinit['PATHS']['ffmpeg_path'])
         
 
 class ffpath:
@@ -38,7 +38,7 @@ class ffpath:
         self.ffmpeg_path = config.get('PATHS', 'ffmpeg_path')
         self.ffprobe_path = config.get('PATHS', 'ffprobe_path')
         self.ffplay_path = config.get('PATHS', 'ffplay_path')
-        logging.info('FFmpeg路径已重置为：' + self.ffmpeg_path)
+        logger.info('FFmpeg路径已重置为：' + self.ffmpeg_path)
         
 
 def set_config(ffmpeg_path, ffprobe_path, ffplay_path):
@@ -49,5 +49,5 @@ def set_config(ffmpeg_path, ffprobe_path, ffplay_path):
     config['PATHS']['ffplay_path'] = ffplay_path
     with open('.\\modules\\config.ini', 'w', encoding='UTF-8') as configfile:
         config.write(configfile)
-    logging.info('FFmpeg路径已设置为：' + ffmpeg_path)
+    logger.info('FFmpeg路径已设置为：' + ffmpeg_path)
 

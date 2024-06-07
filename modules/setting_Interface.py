@@ -1,4 +1,4 @@
-import logging
+from modules.logger_config import logger
 import os
 import configparser
 
@@ -12,10 +12,12 @@ from modules.Ui_settingInterface import Ui_SettingInterface
 
 
 # 打印初始化ffmpeg路径为：
-logging.info(f"初始化ffmpeg路径为：{ffpath.ffmpeg_path}")
-logging.info(f"初始化ffprobe路径为：{ffpath.ffprobe_path}")
+# logger.info(f"初始化ffmpeg路径为：{ffpath.ffmpeg_path}")
+# logger.info(f"初始化ffprobe路径为：{ffpath.ffprobe_path}")
+
 
 class SettingInterface(QWidget, Ui_SettingInterface):
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setupUi(self)
@@ -32,15 +34,16 @@ class SettingInterface(QWidget, Ui_SettingInterface):
         ffpath.ffprobe_path = ffpath.ffprobe_path
         ffpath.ffplay_path = ffpath.ffplay_path
 
-        
-
     # Init_action
     def init_action(self):
         self.SettingIFinputlist.clear()
         # 判断ffmpeg文件是否存在
-        if not (os.path.isfile(ffpath.ffmpeg_path) and os.path.isfile(ffpath.ffprobe_path) and os.path.isfile(ffpath.ffplay_path)):
+        if not (os.path.isfile(ffpath.ffmpeg_path) and os.path.isfile(
+                ffpath.ffprobe_path) and os.path.isfile(ffpath.ffplay_path)):
             self.SettingIFoutputfolder.setText("FFmpeg路径错误，请检查！")
-        elif (os.path.isfile(ffpath.ffmpeg_path) and os.path.isfile(ffpath.ffprobe_path) and os.path.isfile(ffpath.ffplay_path)):
+        elif (os.path.isfile(ffpath.ffmpeg_path)
+              and os.path.isfile(ffpath.ffprobe_path)
+              and os.path.isfile(ffpath.ffplay_path)):
             self.SettingIFoutputfolder.setText("FFmpeg路径检测通过")
 
         if os.path.isfile(ffpath.ffmpeg_path):
@@ -58,10 +61,9 @@ class SettingInterface(QWidget, Ui_SettingInterface):
         else:
             self.SettingIFinputlist.addItem("ffplay路径错误，请检查！")
 
-
     # Init_print
     def init_print(self):
-        logging.info("SettingInterface模块初始化完成！")
+        logger.debug("SettingInterface is initialized！")
 
     # Bind Event
     def bind(self):
@@ -72,13 +74,10 @@ class SettingInterface(QWidget, Ui_SettingInterface):
         # self.SettingIFinputclear.clicked.connect(self.default_ffmpeg_path)
 
         # Check Event
-        
 
         # LineEdit/ComboBox/SpinBox Event
 
-        
         # self.VcodecpIFdoubleSpinBox.valueChanged.connect(self.change_accelerated)
-    
 
     # Set ffmpeg path
     def set_ffmpeg_path(self):
@@ -89,6 +88,7 @@ class SettingInterface(QWidget, Ui_SettingInterface):
             ffplay_path = os.path.join(ffpath_folder, "ffplay.exe")
             set_config(ffmpeg_path, ffprobe_path, ffplay_path)
             ffpath.reset(ffpath)
+            self.init_variables()
             self.init_action()
 
     # def default_ffmpeg_path(self):

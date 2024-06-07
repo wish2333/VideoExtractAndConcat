@@ -208,6 +208,9 @@
             <kerning>true</kerning>
            </font>
           </property>
+          <property name="dragEnabled">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -257,6 +260,9 @@
             <pointsize>10</pointsize>
             <kerning>true</kerning>
            </font>
+          </property>
+          <property name="dragEnabled">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -310,6 +316,9 @@
               <kerning>true</kerning>
              </font>
             </property>
+            <property name="dragEnabled">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
@@ -359,6 +368,9 @@
               <pointsize>10</pointsize>
               <kerning>true</kerning>
              </font>
+            </property>
+            <property name="dragEnabled">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

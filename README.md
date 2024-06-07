@@ -78,17 +78,24 @@ python main.py
    - [ ] 加封面
 - [ ] 字幕界面
    - [ ] 批量添加字幕
-- [ ] ffmpeg自定义参数界面
-   - [ ] 复杂滤镜
+- [x] ffmpeg自定义参数界面
+   - [x] 复杂滤镜
 - [ ] 读取界面
    - [ ] ffprobe
 - [x] 设定界面
    - [x] ffmpeg路径设置→每次封装记得删ini里面的参数
 - [x] 关于界面
-- [ ] 转封装、提取音频视频字幕等等
+- [x] 转封装
+- [ ] 提取音频视频字幕等等
 - [x] 进程中止
    - [x] 发出中止信号→导致软件闪退
    - [x] subprocess中止
+
+## Update20240608-version-pre5.0
+
+remuxInterface用于转封装和提取（未实现）
+
+VfilterInterface用于处理旋转等复杂滤镜模块（额外功能：音频标准化）
 
 ## Update20240519-version-pre4.2
 

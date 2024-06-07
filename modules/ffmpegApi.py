@@ -3,7 +3,7 @@
 
 import subprocess
 import os
-import logging
+from modules.logger_config import logger
 import time
 import threading
 
@@ -27,14 +27,14 @@ class FFmpeg:
         self.interrupt_flag = flag
     def check_interrupt_flag(self):
         while not self.interrupt_flag:
-            # logging.info("ffmpegapi守卫线程运行中")
+            # logger.info("ffmpegapi守卫线程运行中")
             time.sleep(1)
-        logging.info("ffmpegapi检测到中断请求")
+        logger.debug("ffmpegapi检测到中断请求")
         self.interrupt_run()
     def interrupt_run(self):
         if self.interrupt_flag:
             # 如果收到中断信号，则终止FFmpeg进程
-            logging.info("尝试终止FFmpeg进程")
+            logger.debug("尝试终止FFmpeg进程")
             self.p.terminate()
             self.p.wait(timeout=5)
             if self.p.poll() is None:
@@ -42,10 +42,9 @@ class FFmpeg:
             if callable(self.callback):
                 self.callback()
             self.interrupt_flag = False
-            logging.info("FFmpeg进程强制终止")
-        logging.info("ffmpegapi中断请求已处理")
+            logger.debug("FFmpeg进程强制终止")
+        logger.debug("ffmpegapi中断请求已处理")
         
-
     # 定义run方法来执行FFmpeg命令
     def run(self, 
         cmd
@@ -54,52 +53,55 @@ class FFmpeg:
         try:
             cmd = [self.ffmpeg_path] + cmd
             cmd_str = ' '.join(cmd)
-            logging.info(f"尝试执行：{cmd_str}")
+            logger.info(f"尝试执行：{cmd_str}")
             # 创建线程运行FFmpeg命令
             self.p = subprocess.Popen(
                 cmd_str, 
                 stdout=subprocess.PIPE, 
-                stderr=subprocess.STDOUT
+                stderr=subprocess.STDOUT,
+                encoding='utf-8',
+                text=True
             )
             # 创建线程检测中断信号
             t = threading.Thread(target=self.check_interrupt_flag)
             t.daemon = True
             t.start()
             if t.is_alive():
-                logging.info('启动守卫线程成功')
+                logger.debug('启动守卫线程成功')
             else:
-                logging.error('启动守卫线程失败')
+                logger.error('启动守卫线程失败')
             # 实时输出FFmpeg命令的执行信息
             while True:
-                line = self.p.stdout.readline().decode('utf-8')
+                line = self.p.stdout.readline()
                 if not line:
                     # 如果没有更多输出，检查进程是否已经结束
                     if self.p.poll() is not None:
                         break
                     else:
                         continue
-                logging.info(line.strip())  # 打印输出信息
+                logger.debug(line.strip())  # 打印输出信息
+                print(line.strip(), end='\r')  # 打印输出信息
             # 如果出错，获取错误信息
             out, err = self.p.communicate()
             if self.p.returncode != 0:
-                logging.info(f"命令执行失败，错误信息：{err.decode('utf-8')}")
-                raise Exception(err.decode('utf-8'))
+                logger.error(f"命令执行失败，错误信息：{err}")
+                raise Exception(err)
         except FileNotFoundError as fnf_error:
-            logging.error(f"找不到ffmpeg或ffprobe命令，请检查ffmpeg_path和ffprobe_path是否正确配置。")
+            logger.error(f"找不到ffmpeg或ffprobe命令，请检查ffmpeg_path和ffprobe_path是否正确配置。")
             raise fnf_error
         except PermissionError as p_error:
-            logging.error(f"ffmpeg或ffprobe命令没有执行权限，请检查ffmpeg_path和ffprobe_path是否正确配置。")
+            logger.error(f"ffmpeg或ffprobe命令没有执行权限，请检查ffmpeg_path和ffprobe_path是否正确配置。")
             raise p_error
         except Exception as e:
-            logging.error(f"执行FFmpeg命令失败：{e}")
+            logger.error(f"执行FFmpeg命令失败：{e}")
             raise e
         finally:
-            logging.info("FFmpeg命令执行完成")
+            logger.info("FFmpeg命令执行完成")
             if t and t.is_alive():
                 self.interrupt_flag = True  # 设置中断标志
                 t.join()
                 self.interrupt_flag = False  # 重置中断标志
-                logging.info("守卫线程退出")
+                logger.debug("守卫线程退出")
     
     # 输出ffmpeg的版本信息
     def version(self):
@@ -114,24 +116,24 @@ class FFmpeg:
             '-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', 
             input_file
         ]
-        logging.info("执行：" + ' '.join(cmd1))
+        logger.debug("执行：" + ' '.join(cmd1))
         result = subprocess.run(cmd1, capture_output=True, text=True)
         # 检查输出是否为空
         stdout = result.stdout.strip()
         if not stdout:
-            logging.warning("ffprobe 输出为空，无法获取视频持续时间")
+            logger.error("ffprobe 输出为空，无法获取视频持续时间")
             return None  # 或者返回一个默认值
         try:
             duration = float(stdout)
-            logging.info("视频总秒数为：" + str(duration))
+            logger.debug("视频总秒数为：" + str(duration))
             return duration
         except ValueError as e:
-            logging.error("转换视频持续时间为浮点数时出错：", str(e))
+            logger.error("转换视频持续时间为浮点数时出错：", str(e))
             raise e  # 或者返回一个错误信息
 
     # 计算时间字符串
     def time_calculate(self, duration, end):
-        logging.info(end)
+        logger.debug(end)
         # 转换为浮点数进行计算
         hours, minutes, seconds, milliseconds = end.split(':')
         hours = float(hours)
@@ -139,12 +141,12 @@ class FFmpeg:
         end_float = hours * 3600 + minutes * 60 + float(seconds)
         end_float += float(milliseconds) / 1000
         end_time_float = duration - end_float
-        logging.info("结束时间点为：", end_time_float)
+        logger.debug("结束时间点为：", str(end_time_float))
         # 浮点数结果转换为字符串格式
         m, s = divmod(end_time_float, 60)
         h, m = divmod(m, 60)
         end_time = "%02d:%02d:%06.3f" % (h, m, s)
-        logging.info("结束时间点为：", end_time)
+        logger.debug("结束时间点为：", end_time)
         return end_time
 
     # 截取视频(输入文件夹)
@@ -179,11 +181,11 @@ class FFmpeg:
                     encoder, 
                     f'"{output_file}"']
                 # 打印最终输入命令行的cmd指令，从列表转换为字符串
-                # logging.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
+                # logger.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
                 self.run(cmd)
-                logging.info(file + '视频截取完成')
+                # logger.debug(file + '视频截取完成')
             else:
-                logging.info(file + '不是mp4文件，跳过')
+                logger.info(file + '不是mp4文件，跳过')
 
     # 截取视频(输入文件)
     def extract_video_single(self, 
@@ -210,10 +212,10 @@ class FFmpeg:
             encoder, 
             f'"{output_file}"']
         # 打印最终输入命令行的cmd指令，从列表转换为字符串
-        # logging.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
+        # logger.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
         self.run(cmd)
         file = os.path.basename(input_file)
-        logging.info(file + '视频截取完成')
+        # logger.debug(file + '视频截取完成')
 
     def cut_video(self, 
         input_file, 
@@ -236,7 +238,7 @@ class FFmpeg:
             f'"{output_file}"']
         self.run(cmd)
         file = os.path.basename(input_file)
-        logging.info(file + '视频截取完成')
+        logger.info(file + '视频截取完成')
 
     # 合并视频(输入文件夹)
     def merge_video_folder(self, input_folder, input_file1, input_file2, output_folder, encoder='-c:v libx264 -preset veryfast -crf 23 -c:a aac -b:a 192k -ar 44100 -ac 2', overwrite='-y'):
@@ -260,11 +262,11 @@ class FFmpeg:
                     encoder, 
                     f'"{output_file}"']
                 # 打印最终输入命令行的cmd指令，从列表转换为字符串
-                # logging.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
+                # logger.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
                 self.run(cmd)
-                logging.info(file + '视频合并完成')
+                # logger.info(file + '视频合并完成')
             else:
-                logging.info(file + '不是mp4文件，跳过')
+                logger.info(file + '不是mp4文件，跳过')
     
     # 合并视频(输入3个文件)
     def merge_video(self, 
@@ -288,10 +290,10 @@ class FFmpeg:
             encoder, 
             f'"{output_file}"']
         # 打印最终输入命令行的cmd指令，从列表转换为字符串
-        # logging.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
+        # logger.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
         self.run(cmd)
         file = os.path.basename(input_file)
-        logging.info(file + '视频截取完成')
+        # logger.info(file + '视频截取完成')
 
     # 合并视频(输入2个文件)
     def merge_video_two(self, 
@@ -313,10 +315,10 @@ class FFmpeg:
             encoder, 
             f'"{output_file}"']
         # 打印最终输入命令行的cmd指令，从列表转换为字符串
-        # logging.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
+        # logger.info("执行：" + r'Q:\Git\FFmpeg-python\02FFmpegTest\FFmpeg\bin\ffmpeg.exe ' + ' '.join(cmd))
         self.run(cmd)
         file = os.path.basename(output_file)
-        logging.info(file + '视频合并完成')
+        # logger.info(file + '视频合并完成')
 
     # 合并视频(concat)
     # def concat_video(self, 
@@ -339,8 +341,8 @@ class FFmpeg:
             f'"{output_file}"'
         ]
         self.run(cmd)
-        file = os.path.basename(input_file)
-        logging.info(file + '音频转码完成')
+        # file = os.path.basename(input_file)
+        # logger.info(file + '音频转码完成')
 
     # 视频转码
     def video_encode(self, 
@@ -357,8 +359,8 @@ class FFmpeg:
             f'"{output_file}"'
         ]
         self.run(cmd)
-        file = os.path.basename(input_file)
-        logging.info(file + '视频转码完成')
+        # file = os.path.basename(input_file)
+        # logger.info(file + '视频转码完成')
 
     # 加速转码
     def accelerated_encode(self, 
@@ -377,8 +379,8 @@ class FFmpeg:
             f'"{output_file}"'
         ]
         self.run(cmd)
-        file = os.path.basename(input_file)
-        logging.info(file + '视频加速完成')
+        # file = os.path.basename(input_file)
+        # logger.info(file + '视频加速完成')
 
     # 音视频字幕混合
     def avsmix_encode(self, 
@@ -399,5 +401,42 @@ class FFmpeg:
             f'"{output_file}"'
         ]
         self.run(cmd)
-        file = os.path.basename(input_file)
-        logging.info(file + '视频字幕混合完成')
+        # file = os.path.basename(input_file)
+        # logger.info(file + '视频字幕混合完成')
+
+    # 视频转封装
+    def remux_video(self, 
+        input_file, 
+        output_file,
+        format='mp4',
+        overwrite='-y'
+    ):
+        cmd = [
+            '-hide_banner',
+            overwrite, 
+            '-i', 
+            f'"{input_file}"', 
+            r'-c copy',
+            f'"{output_file}.{format}"'
+        ]
+        self.run(cmd)
+        # file = os.path.basename(input_file)
+        # logger.info(file + '视频转封装完成')
+
+    # 常规视频提取
+    def norEx_video(self,
+        input_file,
+        output_file,
+        param,
+        overwrite='-y'
+    ):
+        if param == 'V':
+            cmd = [
+                '-hide_banner',
+                overwrite,
+                '-i',
+                f'"{input_file}"',
+                r'-c:v copy',
+                '-map 0:v:0',
+                f'"{output_file}"'
+            ]

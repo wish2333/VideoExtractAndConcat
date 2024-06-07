@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1085</width>
-    <height>749</height>
+    <width>1089</width>
+    <height>757</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -42,8 +42,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1050</width>
-        <height>734</height>
+        <width>1071</width>
+        <height>739</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -422,17 +422,10 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>## Update20240519-1921
-
-**version-pre4.0**
-
-视频批处理面板完成了中断按钮及逻辑实现（通过中断标志和回调函数向api模块的传输与接受），api模块通过守卫线程实现中断操作并调用回调函数传输中断完成标志。
-
-**version-pre4.1**
-
-完成了视频面板（单文件）的音视频及字幕混流合成。
-
-修复了中断后守卫线程t没有被正确关闭的错误。</string>
+          <string>## Update20240607
+**version-pre5.0**
+- 新增转封装界面
+- 新增复杂滤镜界面（预设横竖屏转换）</string>
          </property>
          <property name="textFormat">
           <enum>Qt::TextFormat::MarkdownText</enum>

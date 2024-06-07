@@ -434,16 +434,15 @@ class Ui_VcodecpInterface(object):
         self.VcodecpIFframe_3.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_3 = QGridLayout(self.VcodecpIFframe_3)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.VcodecpIFcheckBox_5 = CheckBox(self.VcodecpIFframe_3)
-        self.VcodecpIFcheckBox_5.setObjectName(u"VcodecpIFcheckBox_5")
+        self.VcodecpIFlabel_2 = QLabel(self.VcodecpIFframe_3)
+        self.VcodecpIFlabel_2.setObjectName(u"VcodecpIFlabel_2")
+        sizePolicy6.setHeightForWidth(self.VcodecpIFlabel_2.sizePolicy().hasHeightForWidth())
+        self.VcodecpIFlabel_2.setSizePolicy(sizePolicy6)
+        self.VcodecpIFlabel_2.setMinimumSize(QSize(0, 35))
+        self.VcodecpIFlabel_2.setMaximumSize(QSize(16777215, 40))
+        self.VcodecpIFlabel_2.setFont(font5)
 
-        self.gridLayout_3.addWidget(self.VcodecpIFcheckBox_5, 9, 1, 1, 1)
-
-        self.VcodecpIFlabel_9 = QLabel(self.VcodecpIFframe_3)
-        self.VcodecpIFlabel_9.setObjectName(u"VcodecpIFlabel_9")
-        self.VcodecpIFlabel_9.setFont(font4)
-
-        self.gridLayout_3.addWidget(self.VcodecpIFlabel_9, 7, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.VcodecpIFlabel_2, 4, 0, 1, 1)
 
         self.VcodecpIFcheckBox_4 = CheckBox(self.VcodecpIFframe_3)
         self.VcodecpIFcheckBox_4.setObjectName(u"VcodecpIFcheckBox_4")
@@ -462,25 +461,25 @@ class Ui_VcodecpInterface(object):
 
         self.gridLayout_3.addWidget(self.VcodecpIFtimeEdit_3, 5, 0, 1, 1)
 
-        self.VcodecpIFradioButton_2 = RadioButton(self.VcodecpIFframe_3)
-        self.VcodecpIFradioButton_2.setObjectName(u"VcodecpIFradioButton_2")
-        self.VcodecpIFradioButton_2.setMaximumSize(QSize(16777215, 20))
-        self.VcodecpIFradioButton_2.setFont(font4)
+        self.VcodecpIFcutsomFilter = QLineEdit(self.VcodecpIFframe_3)
+        self.VcodecpIFcutsomFilter.setObjectName(u"VcodecpIFcutsomFilter")
 
-        self.gridLayout_3.addWidget(self.VcodecpIFradioButton_2, 8, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.VcodecpIFcutsomFilter, 2, 0, 1, 1)
 
-        self.VcodecpIFlabel_8 = QLabel(self.VcodecpIFframe_3)
-        self.VcodecpIFlabel_8.setObjectName(u"VcodecpIFlabel_8")
-        self.VcodecpIFlabel_8.setFont(font4)
+        self.VcodecpIFpushButton_4 = PushButton(self.VcodecpIFframe_3)
+        self.VcodecpIFpushButton_4.setObjectName(u"VcodecpIFpushButton_4")
+        sizePolicy6.setHeightForWidth(self.VcodecpIFpushButton_4.sizePolicy().hasHeightForWidth())
+        self.VcodecpIFpushButton_4.setSizePolicy(sizePolicy6)
+        self.VcodecpIFpushButton_4.setMinimumSize(QSize(0, 30))
+        self.VcodecpIFpushButton_4.setFont(font6)
 
-        self.gridLayout_3.addWidget(self.VcodecpIFlabel_8, 4, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.VcodecpIFpushButton_4, 8, 1, 1, 1)
 
-        self.VcodecpIFtimeEdit_2 = TimeEdit(self.VcodecpIFframe_3)
-        self.VcodecpIFtimeEdit_2.setObjectName(u"VcodecpIFtimeEdit_2")
-        self.VcodecpIFtimeEdit_2.setMinimumSize(QSize(160, 30))
-        self.VcodecpIFtimeEdit_2.setFont(font7)
+        self.VcodecpIFlabel_9 = QLabel(self.VcodecpIFframe_3)
+        self.VcodecpIFlabel_9.setObjectName(u"VcodecpIFlabel_9")
+        self.VcodecpIFlabel_9.setFont(font4)
 
-        self.gridLayout_3.addWidget(self.VcodecpIFtimeEdit_2, 9, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.VcodecpIFlabel_9, 7, 1, 1, 1)
 
         self.VcodecpIFcheckBox_merge = CheckBox(self.VcodecpIFframe_3)
         self.VcodecpIFcheckBox_merge.setObjectName(u"VcodecpIFcheckBox_merge")
@@ -488,23 +487,11 @@ class Ui_VcodecpInterface(object):
 
         self.gridLayout_3.addWidget(self.VcodecpIFcheckBox_merge, 3, 1, 1, 1)
 
-        self.VcodecpIFlabel_2 = QLabel(self.VcodecpIFframe_3)
-        self.VcodecpIFlabel_2.setObjectName(u"VcodecpIFlabel_2")
-        sizePolicy6.setHeightForWidth(self.VcodecpIFlabel_2.sizePolicy().hasHeightForWidth())
-        self.VcodecpIFlabel_2.setSizePolicy(sizePolicy6)
-        self.VcodecpIFlabel_2.setMinimumSize(QSize(0, 35))
-        self.VcodecpIFlabel_2.setMaximumSize(QSize(16777215, 40))
-        self.VcodecpIFlabel_2.setFont(font5)
+        self.VcodecpIFtFormat = EditableComboBox(self.VcodecpIFframe_3)
+        self.VcodecpIFtFormat.setObjectName(u"VcodecpIFtFormat")
+        self.VcodecpIFtFormat.setFont(font6)
 
-        self.gridLayout_3.addWidget(self.VcodecpIFlabel_2, 4, 0, 1, 1)
-
-        self.VcodecpIFradioButton = RadioButton(self.VcodecpIFframe_3)
-        self.VcodecpIFradioButton.setObjectName(u"VcodecpIFradioButton")
-        self.VcodecpIFradioButton.setMaximumSize(QSize(16777215, 20))
-        self.VcodecpIFradioButton.setFont(font4)
-        self.VcodecpIFradioButton.setChecked(True)
-
-        self.gridLayout_3.addWidget(self.VcodecpIFradioButton, 7, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.VcodecpIFtFormat, 9, 1, 1, 1)
 
         self.VcodecpIFpushButton_3 = PushButton(self.VcodecpIFframe_3)
         self.VcodecpIFpushButton_3.setObjectName(u"VcodecpIFpushButton_3")
@@ -515,14 +502,32 @@ class Ui_VcodecpInterface(object):
 
         self.gridLayout_3.addWidget(self.VcodecpIFpushButton_3, 5, 1, 1, 1)
 
-        self.VcodecpIFpushButton_4 = PushButton(self.VcodecpIFframe_3)
-        self.VcodecpIFpushButton_4.setObjectName(u"VcodecpIFpushButton_4")
-        sizePolicy6.setHeightForWidth(self.VcodecpIFpushButton_4.sizePolicy().hasHeightForWidth())
-        self.VcodecpIFpushButton_4.setSizePolicy(sizePolicy6)
-        self.VcodecpIFpushButton_4.setMinimumSize(QSize(0, 30))
-        self.VcodecpIFpushButton_4.setFont(font6)
+        self.VcodecpIFtimeEdit_2 = TimeEdit(self.VcodecpIFframe_3)
+        self.VcodecpIFtimeEdit_2.setObjectName(u"VcodecpIFtimeEdit_2")
+        self.VcodecpIFtimeEdit_2.setMinimumSize(QSize(160, 30))
+        self.VcodecpIFtimeEdit_2.setFont(font7)
 
-        self.gridLayout_3.addWidget(self.VcodecpIFpushButton_4, 8, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.VcodecpIFtimeEdit_2, 9, 0, 1, 1)
+
+        self.VcodecpIFlabel_8 = QLabel(self.VcodecpIFframe_3)
+        self.VcodecpIFlabel_8.setObjectName(u"VcodecpIFlabel_8")
+        self.VcodecpIFlabel_8.setFont(font4)
+
+        self.gridLayout_3.addWidget(self.VcodecpIFlabel_8, 4, 1, 1, 1)
+
+        self.VcodecpIFClearFil = PushButton(self.VcodecpIFframe_3)
+        self.VcodecpIFClearFil.setObjectName(u"VcodecpIFClearFil")
+        self.VcodecpIFClearFil.setMinimumSize(QSize(0, 40))
+
+        self.gridLayout_3.addWidget(self.VcodecpIFClearFil, 1, 0, 1, 1)
+
+        self.VcodecpIFradioButton = RadioButton(self.VcodecpIFframe_3)
+        self.VcodecpIFradioButton.setObjectName(u"VcodecpIFradioButton")
+        self.VcodecpIFradioButton.setMaximumSize(QSize(16777215, 20))
+        self.VcodecpIFradioButton.setFont(font4)
+        self.VcodecpIFradioButton.setChecked(True)
+
+        self.gridLayout_3.addWidget(self.VcodecpIFradioButton, 7, 0, 1, 1)
 
         self.VcodecpIFdoubleSpinBox = DoubleSpinBox(self.VcodecpIFframe_3)
         self.VcodecpIFdoubleSpinBox.setObjectName(u"VcodecpIFdoubleSpinBox")
@@ -537,22 +542,18 @@ class Ui_VcodecpInterface(object):
 
         self.gridLayout_3.addWidget(self.VcodecpIFdoubleSpinBox, 2, 1, 1, 1)
 
-        self.VcodecpIFClearFil = PushButton(self.VcodecpIFframe_3)
-        self.VcodecpIFClearFil.setObjectName(u"VcodecpIFClearFil")
-        self.VcodecpIFClearFil.setMinimumSize(QSize(0, 40))
-
-        self.gridLayout_3.addWidget(self.VcodecpIFClearFil, 1, 0, 1, 1)
-
         self.VcodecpIFcheckBox_extract = CheckBox(self.VcodecpIFframe_3)
         self.VcodecpIFcheckBox_extract.setObjectName(u"VcodecpIFcheckBox_extract")
         self.VcodecpIFcheckBox_extract.setFont(font4)
 
         self.gridLayout_3.addWidget(self.VcodecpIFcheckBox_extract, 3, 0, 1, 1)
 
-        self.VcodecpIFcutsomFilter = QLineEdit(self.VcodecpIFframe_3)
-        self.VcodecpIFcutsomFilter.setObjectName(u"VcodecpIFcutsomFilter")
+        self.VcodecpIFradioButton_2 = RadioButton(self.VcodecpIFframe_3)
+        self.VcodecpIFradioButton_2.setObjectName(u"VcodecpIFradioButton_2")
+        self.VcodecpIFradioButton_2.setMaximumSize(QSize(16777215, 20))
+        self.VcodecpIFradioButton_2.setFont(font4)
 
-        self.gridLayout_3.addWidget(self.VcodecpIFcutsomFilter, 2, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.VcodecpIFradioButton_2, 8, 0, 1, 1)
 
 
         self.VcodecpIFbox04.addWidget(self.VcodecpIFframe_3)
@@ -627,20 +628,20 @@ class Ui_VcodecpInterface(object):
         self.VcodecpIFcomboBox_3.setItemText(3, QCoreApplication.translate("VcodecpInterface", u"320k", None))
         self.VcodecpIFcomboBox_3.setItemText(4, QCoreApplication.translate("VcodecpInterface", u"512k", None))
 
-        self.VcodecpIFcheckBox_5.setText(QCoreApplication.translate("VcodecpInterface", u"\u4e0d\u91cd\u65b0\u7f16\u7801\uff08\u4e0d\u63a8\u8350\uff0c\u672a\u5b9e\u73b0\uff09", None))
-        self.VcodecpIFlabel_9.setText(QCoreApplication.translate("VcodecpInterface", u"\u8fde\u63a5\u7247\u5c3e", None))
+        self.VcodecpIFlabel_2.setText(QCoreApplication.translate("VcodecpInterface", u"\u7247\u5934\u65f6\u957f", None))
         self.VcodecpIFcheckBox_4.setText(QCoreApplication.translate("VcodecpInterface", u"\u52a0\u901f\u500d\u7387", None))
         self.VcodecpIFtimeEdit_3.setDisplayFormat(QCoreApplication.translate("VcodecpInterface", u"H:mm:ss:zzz", None))
-        self.VcodecpIFradioButton_2.setText(QCoreApplication.translate("VcodecpInterface", u"\u7ed3\u675f\u65f6\u95f4", None))
-        self.VcodecpIFlabel_8.setText(QCoreApplication.translate("VcodecpInterface", u"\u8fde\u63a5\u7247\u5934", None))
-        self.VcodecpIFtimeEdit_2.setDisplayFormat(QCoreApplication.translate("VcodecpInterface", u"H:mm:ss:zzz", None))
-        self.VcodecpIFcheckBox_merge.setText(QCoreApplication.translate("VcodecpInterface", u"\u5408\u5e76\u89c6\u9891", None))
-        self.VcodecpIFlabel_2.setText(QCoreApplication.translate("VcodecpInterface", u"\u7247\u5934\u65f6\u957f", None))
-        self.VcodecpIFradioButton.setText(QCoreApplication.translate("VcodecpInterface", u"\u7247\u5c3e\u65f6\u957f", None))
-        self.VcodecpIFpushButton_3.setText(QCoreApplication.translate("VcodecpInterface", u"\u9009\u62e9\u7247\u5934", None))
-        self.VcodecpIFpushButton_4.setText(QCoreApplication.translate("VcodecpInterface", u"\u9009\u62e9\u7247\u5c3e", None))
-        self.VcodecpIFClearFil.setText(QCoreApplication.translate("VcodecpInterface", u"\u6e05\u9664\u8bbe\u7f6e", None))
-        self.VcodecpIFcheckBox_extract.setText(QCoreApplication.translate("VcodecpInterface", u"\u5207\u5272\u89c6\u9891", None))
         self.VcodecpIFcutsomFilter.setText(QCoreApplication.translate("VcodecpInterface", u"\u81ea\u5b9a\u4e49\u6ee4\u955c\u9884\u7559", None))
+        self.VcodecpIFpushButton_4.setText(QCoreApplication.translate("VcodecpInterface", u"\u9009\u62e9\u7247\u5c3e", None))
+        self.VcodecpIFlabel_9.setText(QCoreApplication.translate("VcodecpInterface", u"\u8fde\u63a5\u7247\u5c3e", None))
+        self.VcodecpIFcheckBox_merge.setText(QCoreApplication.translate("VcodecpInterface", u"\u5408\u5e76\u89c6\u9891", None))
+        self.VcodecpIFtFormat.setText(QCoreApplication.translate("VcodecpInterface", u"test", None))
+        self.VcodecpIFpushButton_3.setText(QCoreApplication.translate("VcodecpInterface", u"\u9009\u62e9\u7247\u5934", None))
+        self.VcodecpIFtimeEdit_2.setDisplayFormat(QCoreApplication.translate("VcodecpInterface", u"H:mm:ss:zzz", None))
+        self.VcodecpIFlabel_8.setText(QCoreApplication.translate("VcodecpInterface", u"\u8fde\u63a5\u7247\u5934", None))
+        self.VcodecpIFClearFil.setText(QCoreApplication.translate("VcodecpInterface", u"\u6e05\u9664\u8bbe\u7f6e", None))
+        self.VcodecpIFradioButton.setText(QCoreApplication.translate("VcodecpInterface", u"\u7247\u5c3e\u65f6\u957f", None))
+        self.VcodecpIFcheckBox_extract.setText(QCoreApplication.translate("VcodecpInterface", u"\u5207\u5272\u89c6\u9891", None))
+        self.VcodecpIFradioButton_2.setText(QCoreApplication.translate("VcodecpInterface", u"\u7ed3\u675f\u65f6\u95f4", None))
     # retranslateUi
 

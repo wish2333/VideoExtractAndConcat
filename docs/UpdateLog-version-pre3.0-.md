@@ -1,4 +1,105 @@
+# Update20240608
+
+## version-pre5.0
+
+- remuxInterface用于转封装和提取（未实现）
+- VfilterInterface用于处理旋转等复杂滤镜模块（额外功能：音频标准化）
+
+### VfilterInterface横竖屏转换
+
+```javascript
+@ 背景为图片
+-filter_complex "[1:v]scale=1080:1920,setsar=1,loop=-1:size=@duration[bg];[0:v]scale=1080:-2,setsar=1[v];[bg][v]overlay=(W-w)/2:(H-h)/2:shortest=1[vout]" -map "[vout]" -map 0:a
+-filter_complex "[1:v]scale=1920:1080,setsar=1,loop=-1:size=@duration[bg];[0:v]scale=-2:1080,setsar=1[v];[bg][v]overlay=(W-w)/2:(H-h)/2:shortest=1[vout]" -map "[vout]" -map 0:a
+@ 需要先ffprobe获取duration用于指定图片持续时间
+```
+
+```javascript
+@ 背景为源视频模糊放大
+-filter_complex "[0:v]split=2[v_main][v_bg];[v_main]scale=w=1080:h=-1,setsar=1,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:color=black@0[v_scaled];[v_bg]crop=ih*0.5625:ih,boxblur=10:5,scale=1080:1920[bg_blurred];[bg_blurred][v_scaled]overlay=(W-w)/2:(H-h)/2:shortest=1[vout]" -map "[vout]" -map 0:a
+-filter_complex "[0:v]split=2[v_main][v_bg];[v_main]scale=w=-1:h=1080,setsar=1,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=black@0[v_scaled];[v_bg]crop=iw:iw*0.5625,boxblur=10:5,scale=1920:1080[bg_blurred];[bg_blurred][v_scaled]overlay=(W-w)/2:(H-h)/2:shortest=1[vout]" -map "[vout]" -map 0:a
+@ 主视频需要用color=black@0指定透明填充
+@ 背景视频需要先裁切到对应分辨率，需计算转换比例，再过模糊滤镜，最后过分辨率滤镜
+```
+
+```javascript
+@ 背景为黑色（可以指定其他颜色）
+-filter_complex "[0:v]scale=w=1080:h=-1,setsar=1,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black[vout]" -map "[vout]" -map 0:a
+-filter_complex "[0:v]scale=-1:h=1080,setsar=1,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black[vout]" -map "[vout]" -map 0:a
+```
+
+### 音频标准化
+
+```javascript
+ -af loudnorm=i=-16.0:lra=5.0:tp=-0.3
+```
+
 # Update20240519-1921
+
+## ## version-pre4.1
+
+完成了视频面板（单文件）的音视频及字幕混流合成。
+
+修复了中断后守卫线程t没有被正确关闭的错误。
+
+### vcodec_Interface.py
+
+subtitle非常容易错误检测路径为选项，必须注意转义的问题
+
+```python
+if self.timeEdit.text() == '0:00:00:000' and self.timeEdit_2.text() == '0:00:00:000':
+    self.console.appendPlainText("执行音视频合成任务，请稍等...")
+    # 音视频合成任务
+    if self.lineEdit3.text() != '':
+        audio_input_file_path = self.lineEdit3.text()
+        audio = f'-i "{audio_input_file_path}"'
+    else:
+        audio = ''
+    if self.lineEdit4.text() != '':
+        subtitle_input_file_path = self.lineEdit4.text().replace(':', r'\:')  # 注意转义
+        if os.path.splitext(subtitle_input_file_path)[1] == '.srt':
+            subtitle_format = 'subtitles'
+        elif os.path.splitext(subtitle_input_file_path)[1] == '.ass':
+            subtitle_format = 'ass'
+        else:
+            logging.error("字幕格式错误，请检查！")
+        subtitle = f'-vf "{subtitle_format}=\'{subtitle_input_file_path}\'"'  
+    else:
+        subtitle = ''
+    self.worker = Worker('avsmix_encode', ffpath.ffmpeg_path, ffpath.ffprobe_path,self.lineEdit1.text(), self.lineEdit2.text(), audio, subtitle, self.plainTextEdit.toPlainText())  # 开启子进程
+    self.thread = WorkerThread(self.worker)
+    self.thread.started.connect(lambda: self.console.appendPlainText("开始音视频合成"))  # 线程开始时显示提示信息
+    self.thread.finished.connect(lambda: self.console.appendPlainText("完成音视频合成"))  # 线程结束时显示提示信息
+    self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
+    self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
+    self.thread.start()  # 开始线程
+```
+
+### ffmpeg.py
+
+```python
+# 音视频字幕混合
+def avsmix_encode(self, 
+    input_file, 
+    output_file, 
+    audio,
+    subtitle,
+    encoder = r'-vcodec libx264 -preset medium -crf 23 -acodec aac -b:a 128k', 
+    overwrite='-y'):
+    cmd = [
+        '-hide_banner',
+        overwrite, 
+        '-i', 
+        f'"{input_file}"', 
+        audio,
+        subtitle, 
+        encoder,
+        f'"{output_file}"'
+    ]
+    self.run(cmd)
+    file = os.path.basename(input_file)
+    logging.info(file + '视频字幕混合完成')
+```
 
 ## version-pre4.0
 
@@ -178,71 +279,6 @@ def run(self,
             t.join()
             self.interrupt_flag = False  # 重置中断标志
             logging.info("守卫线程退出")
-```
-
-## version-pre4.1
-
-完成了视频面板（单文件）的音视频及字幕混流合成。
-
-修复了中断后守卫线程t没有被正确关闭的错误。
-
-### vcodec_Interface.py
-
-subtitle非常容易错误检测路径为选项，必须注意转义的问题
-
-```python
-if self.timeEdit.text() == '0:00:00:000' and self.timeEdit_2.text() == '0:00:00:000':
-    self.console.appendPlainText("执行音视频合成任务，请稍等...")
-    # 音视频合成任务
-    if self.lineEdit3.text() != '':
-        audio_input_file_path = self.lineEdit3.text()
-        audio = f'-i "{audio_input_file_path}"'
-    else:
-        audio = ''
-    if self.lineEdit4.text() != '':
-        subtitle_input_file_path = self.lineEdit4.text().replace(':', r'\:')  # 注意转义
-        if os.path.splitext(subtitle_input_file_path)[1] == '.srt':
-            subtitle_format = 'subtitles'
-        elif os.path.splitext(subtitle_input_file_path)[1] == '.ass':
-            subtitle_format = 'ass'
-        else:
-            logging.error("字幕格式错误，请检查！")
-        subtitle = f'-vf "{subtitle_format}=\'{subtitle_input_file_path}\'"'  
-    else:
-        subtitle = ''
-    self.worker = Worker('avsmix_encode', ffpath.ffmpeg_path, ffpath.ffprobe_path,self.lineEdit1.text(), self.lineEdit2.text(), audio, subtitle, self.plainTextEdit.toPlainText())  # 开启子进程
-    self.thread = WorkerThread(self.worker)
-    self.thread.started.connect(lambda: self.console.appendPlainText("开始音视频合成"))  # 线程开始时显示提示信息
-    self.thread.finished.connect(lambda: self.console.appendPlainText("完成音视频合成"))  # 线程结束时显示提示信息
-    self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
-    self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
-    self.thread.start()  # 开始线程
-```
-
-### ffmpeg.py
-
-```python
-# 音视频字幕混合
-def avsmix_encode(self, 
-    input_file, 
-    output_file, 
-    audio,
-    subtitle,
-    encoder = r'-vcodec libx264 -preset medium -crf 23 -acodec aac -b:a 128k', 
-    overwrite='-y'):
-    cmd = [
-        '-hide_banner',
-        overwrite, 
-        '-i', 
-        f'"{input_file}"', 
-        audio,
-        subtitle, 
-        encoder,
-        f'"{output_file}"'
-    ]
-    self.run(cmd)
-    file = os.path.basename(input_file)
-    logging.info(file + '视频字幕混合完成')
 ```
 
 # Update20240513-version-pre3.0

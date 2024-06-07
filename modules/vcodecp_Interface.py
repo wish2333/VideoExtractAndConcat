@@ -1,4 +1,4 @@
-import logging
+from modules.logger_config import logger
 import os
 
 from PySide6.QtCore import Qt, QThread, Signal, QObject, QTime
@@ -23,7 +23,7 @@ class Worker(QObject):
         self.ffmpeg_path = ffmpeg_path
         self.ffprobe_path = ffprobe_path
         self.task_args = task_args
-        logging.info(f"Simple {task_type} task started")
+        logger.debug(f"{task_type} worker is created")
         self._started_flag = False  # 任务是否开始的标志
         self._interrupted_flag = False  # 任务是否被中断的标志
         self.callback = callback  # 任务执行过程中输出的回调函数
@@ -31,9 +31,9 @@ class Worker(QObject):
     def interrupt(self):
         self._interrupted_flag = True  # 设置任务被中断的标志
         self.ffmpeg_instance.update_interrupt_flag(self._interrupted_flag)  # 更新全局中断标志
-        logging.info('中止信号已发出')
+        logger.debug('中止信号已发出')
     def interrupted_callback(self):
-        logging.info('中止信号回调，worker任务被中断')
+        logger.debug('中止信号回调，worker任务被中断')
         self.is_interrupted = True  # 设置任务被中断的标志
         if callable(self.callback):
             self.callback()
@@ -46,8 +46,6 @@ class Worker(QObject):
             self.extract_video(*self.task_args)
         elif self.task_type == 'cut_video':
             self.cut_video(*self.task_args)
-        elif self.task_type == 'audio_encode':
-            self.audio_encode(*self.task_args)
         elif self.task_type == 'video_encode':
             self.video_encode(*self.task_args)
         elif self.task_type == 'accelerated_encode':
@@ -68,9 +66,6 @@ class Worker(QObject):
     def cut_video(self, input_folder, output_folder, start_time, end_time, encoder, overwrite='-y'):
         self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
         self.ffmpeg_instance.cut_video(input_folder, output_folder, start_time, end_time, encoder, overwrite)
-    def audio_encode(self, input_file, output_file, encoder, overwrite='-y'):
-        self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
-        self.ffmpeg_instance.audio_encode(input_file, output_file, encoder, overwrite)
     def video_encode(self, input_file, output_file, encoder, overwrite='-y'):
         self.ffmpeg_instance = FFmpeg(self.ffmpeg_path, interrupt_flag=self._interrupted_flag, callback=self.interrupted_callback)  # 实例化FFmpegApi
         self.ffmpeg_instance.video_encode(input_file, output_file, encoder, overwrite)
@@ -99,7 +94,7 @@ class WorkerThread(QThread):
         try:
             self.worker.run_ffmpeg_task()
         except Exception as e:
-            logging.error(f"Error occurred while running {self.worker.task_type} task: {e}")
+            logger.error(f"Error occurred while running {self.worker.task_type} task: {e}")
 
     def handle_interrupt(self):
         self.quit()  # 停止线程
@@ -150,6 +145,9 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         fps_list = ['30', '60', '24', '25', '50']
         self.VcodecpIFlineEdit_2.addItems(fps_list)  # 添加帧率选项
 
+        # format_list = ['mp4', 'avi', 'flv', 'webm', 'wmv', 'mkv']
+        # self.VcodecpIFtFormat.addItems(format_list)  # 添加格式选项
+
         self.VcodecpIFcomboBox_5.setEnabled(False)  # 禁止修改profile
         self.VcodecpIFdoubleSpinBox.setEnabled(False)  # 禁止修改加速倍率
         self.VcodecpIFtimeEdit_3.setEnabled(False)  # 禁止修改片头时长
@@ -158,7 +156,7 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         self.VcodecpIFpushButton_4.setEnabled(False)  # 禁止添加片尾
         self.VcodecpIFradioButton.setChecked(True)  # 默认选择片尾时长
 
-        VideoCodecs = ['libx264', 'copy', 'h264_nvenc', 'hevc_nvenc', 'vp9_nvenc', 'av1_nvenc', 'h264_amf', 'hevc_amf', 'vp9_amf', 'av1_amf', 'h264_qsv', 'hevc_qsv', 'vp9_qsv', 'av1_qsv', 'libx265']  # 视频编码器，包括显卡编码
+        VideoCodecs = ['libx264', 'copy', 'h264_nvenc', 'hevc_nvenc', 'av1_nvenc', 'h264_amf', 'hevc_amf', 'av1_amf', 'h264_qsv', 'hevc_qsv', 'av1_qsv', 'libx265']  # 视频编码器，包括显卡编码
         self.VcodecpIFlineEditVE.addItems(VideoCodecs)  # 添加视频编码器选项
 
         AudioCodecs = ['aac', 'copy', 'alac', 'flac', 'MP3', 'vorbis','opus']  # 音频编码器
@@ -167,7 +165,7 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
 
     # Init_print
     def init_print(self):
-        logging.info("VideoCodecpInterface模块初始化完成！")
+        logger.debug("VideoCodecpInterface is initialized！")
         # Welcome message
         self.VcodecpIFconsole.appendPlainText("欢迎使用FFmpeg-python视频处理工具！")
         # encoder
@@ -176,11 +174,11 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         # 判断ffmpeg文件是否存在
         # if not (os.path.isfile(ffpath.ffmpeg_path) and os.path.isfile(ffpath.ffprobe_path)):
         #     self.VcodecpIFconsole.appendPlainText("ffmpeg路径或ffprobe路径错误，请检查！")
-        #     logging.error("ffmpeg or ffprobe error, please check the path!")
+        #     logger.error("ffmpeg or ffprobe error, please check the path!")
         # else:
         #     self.VcodecpIFconsole.appendPlainText(f"ffmpeg初始化：{ffpath.ffmpeg_path}")
         #     self.VcodecpIFconsole.appendPlainText(f"ffprobe初始化：{ffpath.ffprobe_path}")
-        #     logging.info(f"ffmpeg and ffprobe initialized successfully!")
+        #     logger.info(f"ffmpeg and ffprobe initialized successfully!")
 
     # Bind Event
     def bind(self):
@@ -231,12 +229,11 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
     def select_output_folder(self):
         if self.input_file_args != []:
             output_folder = QFileDialog.getExistingDirectory(self, "选择输出文件夹", "")  # 选择输出文件夹
-            input_folder = os.path.dirname(self.input_file_args[0])
-            if output_folder != '' and output_folder != input_folder:  # 输出文件夹不为空且输出文件夹与输入文件夹不同
+            if output_folder != '':  # 输出文件夹不为空且输出文件夹与输入文件夹不同
                 self.output_file_args = [os.path.join(output_folder, os.path.basename(file_path)) for file_path in self.input_file_args]  # 获得输出文件，输出文件名与输入文件名相同
                 self.VcodecpIFoutputfolder.setText(output_folder)
-            elif output_folder == input_folder:  # 输出文件夹与输入文件夹相同
-                MessageBox("警告", "输入输出文件夹相同，请重新选择！", parent=self).exec()
+            else:
+                self.VcodecpIFoutputfolder.setText('选择输出文件夹')
         else:
             MessageBox("警告", "请先选择输入文件！", parent=self).exec()
 
@@ -312,6 +309,8 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
     def change_vcodec(self):
         if self.VcodecpIFlineEditVE.text() != 'copy':
             self.vcodec = f'-vcodec {self.VcodecpIFlineEditVE.text()} '  # 结尾要有空格
+            if self.vcodec in ['-vcodec h264_qsv', '-vcodec hevc_qsv', '-vcodec av1_qsv']:
+                self.VcodecpIFcomboBox_2.setCurrentText('CQP硬编品质(*qsv)')
             self.change_vpreset()
         else:
             self.vcodec = '-vcodec copy '
@@ -373,16 +372,16 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
     # 简单转码任务
     def simple_encoding(self):
         input_file = self.input_file_args[self.i]
-        output_file = self.output_file_args[self.i]
+        output_file = self.output_file_args[self.i] + os.path.splitext(input_file)[-1]
         if os.path.isfile(input_file) and not self.VcodecpIFcheckBox_4.isChecked() and not self.VcodecpIFcheckBox_extract.isChecked() and not self.VcodecpIFcheckBox_merge.isChecked():
             self.VcodecpIFconsole.appendPlainText("执行简单转码任务，请稍等...")
             self.worker = Worker('video_encode', ffpath.ffmpeg_path, ffpath.ffprobe_path, input_file, output_file, self.VcodecpIFplainTextEdit.toPlainText())  # 开启子进程
             self.thread = WorkerThread(self.worker)
             self.thread.started.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{input_file}开始视频转码"))  # 线程开始时显示提示信息
-            logging.info(f"Simple encoding task started, input file: {input_file}, output file: {output_file}")
+            logger.info(f"Simple encoding task started, input file: {input_file}, output file: {output_file}")
             self.thread.started.connect(self.on_thread_started())  # 线程开始时启动子进程
             self.thread.finished.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{input_file}完成视频转码"))  # 线程结束时显示提示信息
-            logging.info(f"Simple encoding task finished, input file: {input_file}, output file: {output_file}")
+            self.thread.finished.connect(lambda: logger.info(f"Accelerated encoding task finished, input file: {input_file}, output file: {output_file}"))
             self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
             self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
             self.thread.finished.connect(self.on_thread_finished)  # 线程结束时开启下一个线程
@@ -394,16 +393,16 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
     # 加速转码任务
     def accelerated_encoding(self):
         input_file = self.input_file_args[self.i]
-        output_file = self.output_file_args[self.i]
+        output_file = self.output_file_args[self.i] + 'accelerated' + os.path.splitext(input_file)[-1]
         if os.path.isfile(input_file) and self.VcodecpIFcheckBox_4.isChecked() and self.VcodecpIFdoubleSpinBox.value() != 1 and not self.VcodecpIFcheckBox_extract.isChecked() and not self.VcodecpIFcheckBox_merge.isChecked():
             self.VcodecpIFconsole.appendPlainText("执行加速转码任务，请稍等...")
             self.worker = Worker('accelerated_encode', ffpath.ffmpeg_path, ffpath.ffprobe_path, input_file, output_file, '%.2f'%self.VcodecpIFdoubleSpinBox.value(), self.VcodecpIFplainTextEdit.toPlainText())  # 开启子进程
             self.thread = WorkerThread(self.worker)
             self.thread.started.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{input_file}开始视频加速转码"))  # 线程开始时显示提示信息
-            logging.info(f"Accelerated encoding task started, input file: {input_file}, output file: {output_file}")
+            logger.info(f"Accelerated encoding task started, input file: {input_file}, output file: {output_file}")
             self.thread.started.connect(self.on_thread_started())  # 线程开始时启动子进程
             self.thread.finished.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{input_file}完成视频加速转码"))  # 线程结束时显示提示信息
-            logging.info(f"Accelerated encoding task finished, input file: {input_file}, output file: {output_file}")
+            self.thread.finished.connect(lambda: logger.info(f"Accelerated encoding task finished, input file: {input_file}, output file: {output_file}"))
             self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
             self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
             self.thread.finished.connect(self.on_thread_finished)  # 线程结束时开启下一个线程
@@ -411,9 +410,8 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         elif not os.path.isfile(input_file):
             MessageBox("错误", f"{input_file}不存在！", parent=self).exec()
             self.on_thread_finished()  #  进行下一个文件
-        elif os.path.isfile(input_file) and self.VcodecpIFcheckBox_4.isChecked() and self.VcodecpIFdoubleSpinBox.value() == 1 and not self.VcodecpIFcheckBox_extract.isChecked() and not self.VcodecpIFcheckBox_merge.isChecked():
+        elif os.path.isfile(input_file) and self.VcodecpIFcheckBox_4.isChecked() and self.VcodecpIFdoubleSpinBox.value() == 1 and not self.VcodecpIFcheckBox_extract.isChecked() and not self.VcodecpIFcheckBox_merge.isChecked() and self.i == 0:
             MessageBox("警告", "加速倍率不能为1！", parent=self).exec()
-            # TODO:设置为终止线程
             self.on_thread_finished()  #  进行下一个文件
 
     def enable_extract(self):
@@ -426,7 +424,7 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
     # 切割任务
     def extract_or_cut_video(self):
         input_file = self.input_file_args[self.i]
-        output_file = self.output_file_args[self.i]
+        output_file = self.output_file_args[self.i] + 'extracted' + os.path.splitext(input_file)[-1]
         if os.path.isfile(input_file) and self.VcodecpIFcheckBox_extract.isChecked() and not self.VcodecpIFcheckBox_4.isChecked() and not self.VcodecpIFcheckBox_merge.isChecked():
             if self.VcodecpIFtimeEdit_3.text() != '0:00:00:000' or self.VcodecpIFtimeEdit_2.text() != '0:00:00:000':
                 # 如果选择了片尾时长，执行切割片尾模式
@@ -435,10 +433,10 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
                     self.worker = Worker('extract_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, input_file, output_file, self.VcodecpIFtimeEdit_3.text(), self.VcodecpIFtimeEdit_2.text(), self.VcodecpIFplainTextEdit.toPlainText())  # 开启子进程
                     self.thread = WorkerThread(self.worker)
                     self.thread.started.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{input_file}开始视频切割"))  # 线程开始时显示提示信息
-                    logging.info(f"Extract video task started, input file: {input_file}, output file: {output_file}")
+                    logger.info(f"Extract video task started, input file: {input_file}, output file: {output_file}")
                     self.thread.started.connect(self.on_thread_started())  # 线程开始时启动子进程
                     self.thread.finished.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{input_file}完成视频切割"))  # 线程结束时显示提示信息
-                    logging.info(f"Extract video task finished, input file: {input_file}, output file: {output_file}")
+                    self.thread.finished.connect(lambda: logger.info(f"Accelerated encoding task finished, input file: {input_file}, output file: {output_file}"))
                     self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
                     self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
                     self.thread.finished.connect(self.on_thread_finished)  # 线程结束时开启下一个线程
@@ -449,10 +447,10 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
                     self.worker = Worker('cut_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, input_file, output_file, self.VcodecpIFtimeEdit_3.text(), self.VcodecpIFtimeEdit_2.text(), self.VcodecpIFplainTextEdit.toPlainText())  # 开启子进程
                     self.thread = WorkerThread(self.worker)
                     self.thread.started.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{input_file}开始视频切割"))  # 线程开始时显示提示信息
-                    logging.info(f"Cut video task started, input file: {input_file}, output file: {output_file}")
+                    logger.info(f"Cut video task started, input file: {input_file}, output file: {output_file}")
                     self.thread.started.connect(self.on_thread_started())  # 线程开始时启动子进程
                     self.thread.finished.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{input_file}完成视频切割"))  # 线程结束时显示提示信息
-                    logging.info(f"Cut video task finished, input file: {input_file}, output file: {output_file}")
+                    self.thread.finished.connect(lambda: logger.info(f"Accelerated encoding task finished, input file: {input_file}, output file: {output_file}"))
                     self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
                     self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
                     self.thread.finished.connect(self.on_thread_finished)  # 线程结束时开启下一个线程
@@ -465,7 +463,7 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
     # 合并任务
     def merge_or_concat_video(self):
         self.merge_input_file = self.input_file_args[self.i]
-        self.merge_output_file = self.output_file_args[self.i]
+        self.merge_output_file = self.output_file_args[self.i] + 'merged' + os.path.splitext(self.merge_input_file)[-1]
         if  self.VcodecpIFcheckBox_merge.isChecked() and not self.VcodecpIFcheckBox_extract.isChecked()  and not self.VcodecpIFcheckBox_4.isChecked():
             if self.VcodecpIFpushButton_3.text() != '选择片头' and self.VcodecpIFpushButton_4.text() != '选择片尾':
                 self.merge_3_videos()
@@ -482,10 +480,10 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
             #     self.worker = Worker('concat_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, input_file, output_file, self.op_file, self.ed_file, r'vcodec=copy acodec=copy')  # 开启子进程
             #     self.thread = WorkerThread(self.worker)
             #     self.thread.started.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{input_file}开始视频合并"))  # 线程开始时显示提示信息
-            #     logging.info(f"Merge video task started, input file: {input_file}, output file: {output_file}")
+            #     logger.info(f"Merge video task started, input file: {input_file}, output file: {output_file}")
             #     self.thread.started.connect(self.on_thread_started())  # 线程开始时启动子进程
             #     self.thread.finished.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{input_file}完成视频合并"))  # 线程结束时显示提示信息
-            #     logging.info(f"Merge video task finished, input file: {input_file}, output file: {output_file}")
+            #     self.thread.finished.connect(lambda: logger.info(f"Accelerated encoding task finished, input file: {input_file}, output file: {output_file}"))
             #     self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
             #     self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象                
             #     self.thread.finished.connect(self.on_thread_finished)  # 线程结束时开启下一个线程
@@ -522,10 +520,10 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
                 self.worker = Worker('merge_video', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.merge_input_file, self.merge_output_file, self.op_file, self.ed_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution, fps)  # 开启子进程
             self.thread = WorkerThread(self.worker)
             self.thread.started.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{self.merge_input_file}开始视频合并"))  # 线程开始时显示提示信息
-            logging.info(f"Merge video task started, input file: {self.merge_input_file}, output file: {self.merge_output_file}")
+            logger.info(f"Merge video task started, input file: {self.merge_input_file}, output file: {self.merge_output_file}")
             self.thread.started.connect(self.on_thread_started())  # 线程开始时启动子进程
             self.thread.finished.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{self.merge_input_file}完成视频合并"))  # 线程结束时显示提示信息
-            logging.info(f"Merge video task finished, input file: {self.merge_input_file}, output file: {self.merge_output_file}")
+            self.thread.finished.connect(lambda: logger.info(f"Merge video task finished, input file: {self.merge_input_file}, output file: {self.merge_output_file}"))
             self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
             self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
             self.thread.finished.connect(self.on_thread_finished)  # 线程结束时开启下一个线程
@@ -560,10 +558,10 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
                     self.worker = Worker('merge_video_two', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.op_file, self.merge_output_file, self.merge_input_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution, fps)  # 开启子进程
                 self.thread = WorkerThread(self.worker)
                 self.thread.started.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{self.merge_input_file}开始视频合并"))  # 线程开始时显示提示信息
-                logging.info(f"Merge video task started, input file: {self.merge_input_file}, output file: {self.merge_output_file}")
+                logger.info(f"Merge video task started, input file: {self.merge_input_file}, output file: {self.merge_output_file}")
                 self.thread.started.connect(self.on_thread_started())  # 线程开始时启动子进程
                 self.thread.finished.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{self.merge_input_file}完成视频合并"))  # 线程结束时显示提示信息
-                logging.info(f"Merge video task finished, input file: {self.merge_input_file}, output file: {self.merge_output_file}")
+                self.thread.finished.connect(lambda: logger.info(f"Merge video task finished, input file: {self.merge_input_file}, output file: {self.merge_output_file}"))
                 self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
                 self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
                 self.thread.finished.connect(self.on_thread_finished)  # 线程结束时开启下一个线程
@@ -593,10 +591,10 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
                     self.worker = Worker('merge_video_two', ffpath.ffmpeg_path, ffpath.ffprobe_path, self.merge_input_file, self.merge_output_file, self.ed_file, self.VcodecpIFplainTextEdit.toPlainText(), resolution, fps)  # 开启子进程
                 self.thread = WorkerThread(self.worker)
                 self.thread.started.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{self.merge_input_file}开始视频合并"))  # 线程开始时显示提示信息
-                logging.info(f"Merge video task started, input file: {self.merge_input_file}, output file: {self.merge_output_file}")
+                logger.info(f"Merge video task started, input file: {self.merge_input_file}, output file: {self.merge_output_file}")
                 self.thread.started.connect(self.on_thread_started())  # 线程开始时启动子进程
                 self.thread.finished.connect(lambda: self.VcodecpIFconsole.appendPlainText(f"{self.merge_input_file}完成视频合并"))  # 线程结束时显示提示信息
-                logging.info(f"Merge video task finished, input file: {self.merge_input_file}, output file: {self.merge_output_file}")
+                self.thread.finished.connect(lambda: logger.info(f"Merge video task finished, input file: {self.merge_input_file}, output file: {self.merge_output_file}"))
                 self.thread.finished.connect(self.worker.deleteLater)  # 线程结束时删除worker对象
                 self.thread.finished.connect(self.thread.deleteLater)  # 线程结束时删除线程对象
                 self.thread.finished.connect(self.on_thread_finished)  # 线程结束时开启下一个线程
@@ -697,11 +695,11 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
     
     def on_thread_started(self):
         self.is_paused = True  # 开启暂停标志
-        logging.info(f'线程创建，暂停循环，i={self.i}')
+        logger.debug(f'线程创建，暂停循环，i={self.i}')
     def on_thread_finished(self):
         self.is_paused = False  # 重置暂停标志
         self.i = self.i + 1  # 开启下一个文件
-        logging.info(f'{self.i-1}线程结束，开始循环，i={self.i}')
+        logger.debug(f'{self.i-1}线程结束，开始循环，i={self.i}')
         self.encoding()  # 开启下一个线程
 
     def freeze_config(self, text=''):
@@ -729,7 +727,9 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         self.VcodecpIFpushButton_3.setEnabled(False)  # 禁止选择开头文件
         self.VcodecpIFpushButton_4.setEnabled(False)  # 禁止选择结尾文件
         self.VcodecpIFplainTextEdit.setEnabled(False)  # 禁止自定义编码参数
-        logging.info(f"Freeze config. {text}")
+        self.VcodecpIFcheckBox_extract.setEnabled(False)  # 禁止enable切割转码
+        self.VcodecpIFtFormat.setEnabled(False)  # 禁止修改输出格式
+        logger.debug(f"Freeze config. {text}")
         # self.VcodecpIFconsole.appendPlainText("冻结配置")
     def unfreeze_config(self):
         self.VcodecpIFlineEditVE.setEnabled(True)  # 解除禁止修改视频编码器
@@ -748,6 +748,8 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         self.VcodecpIFradioButton_2.setEnabled(True)  # 解除禁止enable切割模式
         self.VcodecpIFClearFil.setEnabled(True)  # 解除禁止清除输入文件
         self.VcodecpIFplainTextEdit.setEnabled(True)  # 禁止自定义编码参数
+        self.VcodecpIFcheckBox_extract.setEnabled(True)  # 解除禁止enable切割转码
+        self.VcodecpIFtFormat.setEnabled(True)  # 解除禁止修改输出格式
 
         if self.VcodecpIFcheckBox_2.isChecked():  # 如果修改分辨率，则解除禁止修改分辨率
             self.VcodecpIFlineEdit.setEnabled(True)  # 解除禁止修改分辨率
@@ -764,13 +766,13 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
             self.VcodecpIFpushButton_3.setEnabled(True)  # 解除禁止选择开头文件
             self.VcodecpIFpushButton_4.setEnabled(True)  # 解除禁止选择结尾文件
 
-        logging.info("Unfreeze config.")
+        logger.debug("Unfreeze config.")
         # self.VcodecpIFconsole.appendPlainText("解除冻结配置")
 
     def stop(self):
         if self.worker._started_flag:
             self.is_paused = True  # 开启暂停标志
-            logging.info(f'暂停循环，i={self.i}')
+            logger.warning(f'终止循环，i={self.i}')
             self.i = 2600000000  # 设定一个很大的数值，使线程结束
             self.worker.interrupt()  # 停止worker
             if self.worker.is_interrupted:  # 停止worker
