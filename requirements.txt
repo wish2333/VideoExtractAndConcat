@@ -1,0 +1,15 @@
+ae-ffmpeg==1.2.0
+auto-editor==24.19.1
+colorthief==0.2.1
+darkdetect==0.8.0
+numpy==1.26.4
+pillow==10.3.0
+pyav==12.0.5
+PySide6==6.7.0
+PySide6-Fluent-Widgets==1.5.6
+PySide6_Addons==6.7.0
+PySide6_Essentials==6.7.0
+PySideSix-Frameless-Window==0.3.12
+pywin32==306
+scipy==1.13.0
+shiboken6==6.7.0
