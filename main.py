@@ -13,8 +13,9 @@ from modules.vcodecp_Interface import VcodecpInterface
 from modules.vcodec_Interface import VcodecInterface
 from modules.remuxInterface import RemuxInterface
 from modules.VfilterInterface import VfilterInterface
+from modules.VautocutInterface import VautocutInterface
 from modules.about_Interface import AboutInterface
-from modules.config import init_ffpath
+from modules.config import init_ffpath, init_autopath
 
 
 
@@ -45,7 +46,6 @@ class mainWindow(FluentWindow):
         self.init_widget()
         self.init_navigation()
         self.init_config()
-
         
     def init_windows(self):
         self.resize(1280, 720)  # 设置窗口大小
@@ -57,6 +57,7 @@ class mainWindow(FluentWindow):
         self.videoInterface = VcodecpInterface(self)
         self.remuxInterface = RemuxInterface(self)
         self.VfilterInterface = VfilterInterface(self)
+        self.VautocutInterface = VautocutInterface(self)
         self.SettingInterface = SettingInterface(self)
         self.AboutInterface = AboutInterface(self)
 
@@ -67,14 +68,16 @@ class mainWindow(FluentWindow):
         self.addSubInterface(self.remuxInterface, FluentIcon.FILTER, "    Remux")
         self.addSubInterface(self.VfilterInterface, FluentIcon.TRANSPARENT, "    Video Filter")
 
-        # self.navigationInterface.addSeparator()
+        self.navigationInterface.addSeparator()
+        self.addSubInterface(self.VautocutInterface, FluentIcon.CODE, "    Autocut")
 
         self.addSubInterface(self.AboutInterface, FluentIcon.INFO, "    About", NavigationItemPosition.BOTTOM)
         self.addSubInterface(self.SettingInterface, FluentIcon.SETTING, "    Setting", NavigationItemPosition.BOTTOM)
 
     def init_config(self):
         init_ffpath()
-
+        init_autopath()
+        self.SettingInterface.init_action()
 
 
 

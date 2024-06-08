@@ -68,7 +68,7 @@ python main.py
 - [ ] 视频批处理界面
    - [x] 锁片头尾
    - [ ] 转码参数
-      - [ ] 码率
+      - [ ] 码率bug
       - [ ] 提示
    - [ ] 添加音轨
 - [x] 视频单文件界面
@@ -90,6 +90,11 @@ python main.py
 - [x] 进程中止
    - [x] 发出中止信号→导致软件闪退
    - [x] subprocess中止
+- [x] 自动剪辑界面
+
+## Update20240608-version-1.0
+
+VautocutInterface用于自动剪辑（剪气口导出视频/音频/工程文件/切片、转码、切割、加速）
 
 ## Update20240608-version-pre5.0
 
@@ -188,5 +193,7 @@ version-pre1.1弃用
 [FFmpeg](https://ffmpeg.org/download.html)
 
 [PyQt-Fluent-Widgets](https://github.com/zhiyiYo/PyQt-Fluent-Widgets)
+
+[auto-editor](https://github.com/WyattBlue/auto-editor)
 
 [MihiroToolbox](https://github.com/Eanya-Tonic/MihiroToolbox)

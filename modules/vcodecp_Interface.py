@@ -159,7 +159,7 @@ class VcodecpInterface(QWidget, Ui_VcodecpInterface):
         VideoCodecs = ['libx264', 'copy', 'h264_nvenc', 'hevc_nvenc', 'av1_nvenc', 'h264_amf', 'hevc_amf', 'av1_amf', 'h264_qsv', 'hevc_qsv', 'av1_qsv', 'libx265']  # 视频编码器，包括显卡编码
         self.VcodecpIFlineEditVE.addItems(VideoCodecs)  # 添加视频编码器选项
 
-        AudioCodecs = ['aac', 'copy', 'alac', 'flac', 'MP3', 'vorbis','opus']  # 音频编码器
+        AudioCodecs = ['aac', 'copy', 'alac', 'flac', 'libmp3lame', 'libvorbis','libopus']  # 音频编码器
         self.VcodecpIFlineEditAE.addItems(AudioCodecs)  # 添加音频编码器选项
 
 

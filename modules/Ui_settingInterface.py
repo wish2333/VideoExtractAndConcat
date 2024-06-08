@@ -16,9 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QFrame, QGridLayout,
-    QHBoxLayout, QLabel, QLayout, QListWidgetItem,
-    QPlainTextEdit, QPushButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+    QHBoxLayout, QLabel, QLayout, QLineEdit,
+    QListWidgetItem, QPlainTextEdit, QPushButton, QSizePolicy,
+    QSpacerItem, QVBoxLayout, QWidget)
 
 from qfluentwidgets import (ListWidget, PlainTextEdit, PushButton, ScrollArea)
 
@@ -127,7 +127,10 @@ class Ui_SettingInterface(object):
 
         self.SettingIFoutputfolder = QPushButton(self.SettingIFbox02)
         self.SettingIFoutputfolder.setObjectName(u"SettingIFoutputfolder")
-        self.SettingIFoutputfolder.setFont(font2)
+        font3 = QFont()
+        font3.setPointSize(12)
+        font3.setBold(False)
+        self.SettingIFoutputfolder.setFont(font3)
 
         self.gridLayout.addWidget(self.SettingIFoutputfolder, 0, 2, 1, 1)
 
@@ -152,6 +155,36 @@ class Ui_SettingInterface(object):
 
         self.SettingIFbox03 = QHBoxLayout()
         self.SettingIFbox03.setObjectName(u"SettingIFbox03")
+        self.SettingIFframe = QFrame(self.SettingIFfacescrollAreaWidgetContents)
+        self.SettingIFframe.setObjectName(u"SettingIFframe")
+        self.SettingIFframe.setFrameShape(QFrame.Shape.StyledPanel)
+        self.SettingIFframe.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout = QHBoxLayout(self.SettingIFframe)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.SettingIFpushButton = QPushButton(self.SettingIFframe)
+        self.SettingIFpushButton.setObjectName(u"SettingIFpushButton")
+        self.SettingIFpushButton.setMinimumSize(QSize(0, 30))
+        self.SettingIFpushButton.setFont(font2)
+
+        self.horizontalLayout.addWidget(self.SettingIFpushButton)
+
+        self.SettingIFlineEdit = QLineEdit(self.SettingIFframe)
+        self.SettingIFlineEdit.setObjectName(u"SettingIFlineEdit")
+        font4 = QFont()
+        font4.setPointSize(12)
+        self.SettingIFlineEdit.setFont(font4)
+
+        self.horizontalLayout.addWidget(self.SettingIFlineEdit)
+
+        self.SettingIFpushButton_2 = QPushButton(self.SettingIFframe)
+        self.SettingIFpushButton_2.setObjectName(u"SettingIFpushButton_2")
+        self.SettingIFpushButton_2.setFont(font4)
+
+        self.horizontalLayout.addWidget(self.SettingIFpushButton_2)
+
+
+        self.SettingIFbox03.addWidget(self.SettingIFframe)
+
 
         self.verticalLayout_3.addLayout(self.SettingIFbox03)
 
@@ -190,5 +223,7 @@ class Ui_SettingInterface(object):
         self.SettingIFinputfile.setText(QCoreApplication.translate("SettingInterface", u"\u8bbe\u7f6eFFmpeg\u8def\u5f84", None))
         self.SettingIFinputclear.setText(QCoreApplication.translate("SettingInterface", u"\u6062\u590d\u9ed8\u8ba4", None))
         self.SettingIFoutputfolder.setText(QCoreApplication.translate("SettingInterface", u"FFmpeg\u8def\u5f84\u68c0\u6d4b\u901a\u8fc7", None))
+        self.SettingIFpushButton.setText(QCoreApplication.translate("SettingInterface", u"\u8bbe\u7f6eauto-editor\u8def\u5f84", None))
+        self.SettingIFpushButton_2.setText(QCoreApplication.translate("SettingInterface", u"auto-editor\u8def\u5f84\u68c0\u6d4b\u901a\u8fc7", None))
     # retranslateUi
 

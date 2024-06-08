@@ -7,7 +7,7 @@ from PySide6.QtGui import QPixmap, QPainter, QColor
 from PySide6.QtWidgets import QWidget, QFileDialog, QMessageBox, QListWidgetItem
 from qfluentwidgets import MessageBox
 
-from modules.config import ffpath, set_config
+from modules.config import ffpath, autopath, set_config, set_auto_path
 from modules.Ui_settingInterface import Ui_SettingInterface
 
 
@@ -32,18 +32,18 @@ class SettingInterface(QWidget, Ui_SettingInterface):
         # ffpath
         ffpath.ffmpeg_path = ffpath.ffmpeg_path
         ffpath.ffprobe_path = ffpath.ffprobe_path
-        ffpath.ffplay_path = ffpath.ffplay_path
+        # ffpath.ffplay_path = ffpath.ffplay_path
+        # autopath
+        autopath.auto_path = autopath.auto_path
 
     # Init_action
     def init_action(self):
         self.SettingIFinputlist.clear()
         # 判断ffmpeg文件是否存在
         if not (os.path.isfile(ffpath.ffmpeg_path) and os.path.isfile(
-                ffpath.ffprobe_path) and os.path.isfile(ffpath.ffplay_path)):
+                ffpath.ffprobe_path)):
             self.SettingIFoutputfolder.setText("FFmpeg路径错误，请检查！")
-        elif (os.path.isfile(ffpath.ffmpeg_path)
-              and os.path.isfile(ffpath.ffprobe_path)
-              and os.path.isfile(ffpath.ffplay_path)):
+        elif (os.path.isfile(ffpath.ffmpeg_path) and os.path.isfile(ffpath.ffprobe_path)):
             self.SettingIFoutputfolder.setText("FFmpeg路径检测通过")
 
         if os.path.isfile(ffpath.ffmpeg_path):
@@ -56,10 +56,17 @@ class SettingInterface(QWidget, Ui_SettingInterface):
         else:
             self.SettingIFinputlist.addItem("ffprobe路径错误，请检查！")
 
-        if os.path.isfile(ffpath.ffplay_path):
-            self.SettingIFinputlist.addItem(ffpath.ffplay_path)
+        # if os.path.isfile(ffpath.ffplay_path):
+        #     self.SettingIFinputlist.addItem(ffpath.ffplay_path)
+        # else:
+        #     self.SettingIFinputlist.addItem("ffplay路径错误，请检查！")
+
+        if os.path.isfile(autopath.auto_path):
+            self.SettingIFlineEdit.setText(autopath.auto_path)
+            self.SettingIFpushButton_2.setText('auto-editor路径检测通过')
         else:
-            self.SettingIFinputlist.addItem("ffplay路径错误，请检查！")
+            self.SettingIFlineEdit.setText("auto-editor路径错误，请检查！")
+            self.SettingIFpushButton_2.setText('请检查')
 
     # Init_print
     def init_print(self):
@@ -73,6 +80,8 @@ class SettingInterface(QWidget, Ui_SettingInterface):
         self.SettingIFoutputfolder.clicked.connect(self.set_ffmpeg_path)
         # self.SettingIFinputclear.clicked.connect(self.default_ffmpeg_path)
 
+        self.SettingIFpushButton.clicked.connect(self.set_auto_path)
+
         # Check Event
 
         # LineEdit/ComboBox/SpinBox Event
@@ -85,9 +94,17 @@ class SettingInterface(QWidget, Ui_SettingInterface):
         if ffpath_folder:
             ffmpeg_path = os.path.join(ffpath_folder, "ffmpeg.exe")
             ffprobe_path = os.path.join(ffpath_folder, "ffprobe.exe")
-            ffplay_path = os.path.join(ffpath_folder, "ffplay.exe")
-            set_config(ffmpeg_path, ffprobe_path, ffplay_path)
+            # ffplay_path = os.path.join(ffpath_folder, "ffplay.exe")
+            set_config(ffmpeg_path, ffprobe_path)
             ffpath.reset(ffpath)
+            self.init_variables()
+            self.init_action()
+
+    def set_auto_path(self):
+        auto_path = QFileDialog.getOpenFileName(self, "选择auto-editor路径", "", "auto-editor.exe")[0]
+        if auto_path:
+            set_auto_path(auto_path)
+            autopath.reset(autopath)
             self.init_variables()
             self.init_action()
 
